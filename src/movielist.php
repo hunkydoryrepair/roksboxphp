@@ -272,6 +272,7 @@
 				if ($ROKSBOX_MODE) {
 					print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($row['c12'] . "." . $row['c13'] . ") " . $name) . "</A></TD></TR>\n");
 					print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
+					print("<TR><TD><A HREF=\"" . $path . ".xml\"> </A></TD></TR>\n");
 				} else {
 					print("<TR><TD COLSPAN=2><HR/></TD></TR>\n");
 					print("<TR><TD valign=\"top\"><A HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></A></TD>\n");
@@ -300,6 +301,7 @@
 				if ($ROKSBOX_MODE) {
 					print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($name) . "</A></TD></TR>\n");
 					print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
+					print("<TR><TD><A HREF=\"" . $path . ".xml\"> <img border=0 src=\"" . $path . ".xml\"/></A></TD></TR>\n");
 				} else {
 					print("<TR><TD COLSPAN=2><HR/></TD></TR>\n");
 					print("<TR><TD><A HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></A></TD>\n");
@@ -382,6 +384,7 @@
 	function findOrExtractID($db,$params) {
 		$cmd = $params[1];
 		if (strcasecmp($cmd,"PLAYLISTS")===0) {
+			if (count($params) < 4) return null;
 			$list = $params[2];
 			$title = $params[3];
 			$title = substr($title, 0, strlen($title)-4); // trim off extension
@@ -889,6 +892,7 @@
 						if ($ROKSBOX_MODE) {
 							print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($title) . "</A></TD></TR>\n");
 							print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
+							print("<TR><TD><A HREF=\"" . $path . ".xml\"> </A></TD></TR>\n");
 						} else {
 							print("<div style=\"clear:both\"><HR/></div>\n");
 
