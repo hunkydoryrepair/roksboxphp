@@ -1,0 +1,15 @@
+<STYLE type="text/css">
+a {font-family:arial,sans-serif; font-size:12pt; font-weight:bold}
+span.movietitle {color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 14pt; font-style:italic}
+span.director {display:block; float:left; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
+span.runtime {display:block; float:right; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
+.description {font-family:arial,sans-serif; font-size: 12pt; color:#333333}
+.topheader {display:block; font-family:arial,sans-serif; font-size: 14pt; right:0px; margin:0px; padding:5px; font-weight:bold; text-align:center; background-color:lightgray; vertical-align:middle}
+span.backlink {display:block; position:absolute; top:25px; left:25px; background-color:teal; color:black; border:1px solid}
+.thumbblock {display:inline-block;margin:5px}
+a.backlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; text-decoration:none}
+span.playlink {display:block; padding-top:5px; clear:both}
+img.thumbnail {width:206px; border:0}
+a.playlink {font-family:arial,sans-serif; font-size:14pt;  border:1px solid; font-weight:bold; color:blue; background-color:lightgray; text-decoration:none}
+a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; background-color:lightgray; text-decoration:none}
+</STYLE>
