@@ -2,12 +2,13 @@
 
 	// for file paths in the DB that use the file system location, we replace
 	// the MOVIE_FS_FILES_BASE with MOVIE_HTTP_FILES_BASE
-	$MOVIE_HTTP_FILES_BASE = "/media/movies/";
-	$MOVIE_FS_FILES_BASE = "/Volumes/Bolivia/movies/";
+	$MOVIE_HTTP_FILES_BASE = "/movies/";
+	$MOVIE_FS_FILES_BASE = "/media/usb/webroot/movies/";
 	// specify where the database location is. If it is relative to the .php file,
 	// set $MOVIE_DB_LOCATION_IS_RELATIVE to true
-	$MOVIE_DB_LOCATION = "/../../db/Movies.db";
+	$MOVIE_DB_LOCATION = "/../db/Movies.db";
 	$MOVIE_DB_LOCATION_IS_RELATIVE = true;
+	$USE_XSENDFILE = false;
 	// GENREs can be redundant (like SUSPENSE and THRILLER, or SPORT and SPORTS FILM). 
 	// This array contains GENRE to show or not show. 
 	$GENRE_FILTER = array ("default" => true,
@@ -432,14 +433,15 @@
 	}
 	
 	function sendFileContents($filepath, $originalname) {
-//		redirect method
-//		$path = fs2httppath($path);
-//		header("Location: http://" . $_SERVER['SERVER_NAME'] . filepathencode($path) );
-		
-// X-sendfile method		
-		header("X-Sendfile: " . $filepath);
-		header("Content-type: application/octet-stream");
-		header('Content-Disposition: attachment; filename="' . basename($originalname) . '"');		
+		global $USE_XSENDFILE;
+		if ($USE_XSENDFILE) {
+			header("X-Sendfile: " . $filepath);
+			header("Content-type: application/octet-stream");
+			header('Content-Disposition: attachment; filename="' . basename($originalname) . '"');		
+		} else {
+			$path = fs2httppath($filepath);
+			header("Location: http://" . $_SERVER['SERVER_NAME'] . filepathencode($path) );
+		}
 	}
 	
 	
