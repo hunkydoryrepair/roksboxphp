@@ -12,5 +12,6 @@ getid3<br>
 MP4Info<br>
 Jquery - linked to remotely<br>
 sqlite3 - requires php-sqlite3 module be installed<br>
+php-xml - requires xml module for php<br>
 mod_xsendfile - configue apache with this module <br>
 
