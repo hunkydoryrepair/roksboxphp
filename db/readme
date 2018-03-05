@@ -1,0 +1,6 @@
+
+sqlite3 database
+
+Based on the schema used by XBMC, it is probably not longer compatible.
+
+in the config, point to this database file using absolute or relative path.

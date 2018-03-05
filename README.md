@@ -4,8 +4,14 @@ Server for Roksbox Roku app. Serves directory listings and thumbnails based on d
 Not quite ready for public consumption. This project has dependencies that are not well documented.
 
 # Dependencies
-TVDB
-Zend
-getid3
-MP4Info
-Jquery
+TVDB - https://github.com/ryandoherty/phptvdb.git  
+Copy the TVDB project into the movielist-tools folder
+<br>
+getid3 - Copy into the movielist-tools folder
+<br>
+Jquery - linked to remotely<br>
+sqlite3 - requires php-sqlite3 module be installed<br>
+php-xml - requires xml module for php<br>
+php7.0-gd - needs GD library for PHP<br>
+mod_xsendfile - configue apache with this module <br>
+
