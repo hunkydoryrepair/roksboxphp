@@ -7,11 +7,11 @@ Not quite ready for public consumption. This project has dependencies that are n
 TVDB - https://github.com/ryandoherty/phptvdb.git  
 Copy the TVDB project into the movielist-tools folder
 <br>
-Zend<br>
-getid3<br>
-MP4Info<br>
+getid3 - Copy into the movielist-tools folder
+<br>
 Jquery - linked to remotely<br>
 sqlite3 - requires php-sqlite3 module be installed<br>
 php-xml - requires xml module for php<br>
+php7.0-gd - needs GD library for PHP<br>
 mod_xsendfile - configue apache with this module <br>
 
