@@ -40,12 +40,14 @@
 	//
 	function generateCacheThumbnail($thumb, $targetpath) {
 
+		if (empty($thumb)) return null;
+		
 		$image = imagecreatefromjpeg($thumb);
 		if (!$image) {
 			$image = imagecreatefrompng($thumb);
 			if (!$image) {
 				error_log("Unable to read as JPEG: " . $thumb);
-				return NULL;
+				return null;
 			}
 		}
 		$w = imagesx($image);
@@ -66,7 +68,7 @@
 		
 		if (!$success) {
 			error_log("Unable to save JPEG: " . $filepath);
-			return NULL;
+			return null;
 		}
 		return $targetpath;
 	}
