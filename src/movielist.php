@@ -542,7 +542,7 @@
 	
 	
 	header("Content-Type: text/html; charset=UTF-8");
-	print('<html>\n<head>\n<title>Movie List</title>\n');
+	print('<html><head><title>Movie List</title>');
 	print('<link rel="stylesheet" href="../moviestyles.css">');
 	
 	print("</head>\n<body>\n");
