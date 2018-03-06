@@ -49,6 +49,8 @@
 			<input type="file" name="file" multiple="multiple"/>
 			<input type="submit" />
 		</form>
+		<div id="uploadspeed">
+		</div>
 		<div id="toupload">
 			<h2>to upload:</h2>
 			<ul>
