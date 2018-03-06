@@ -3,6 +3,8 @@
 	include 'getid3/getid3.php';
 
 	header("Content-Type: text/html; charset=UTF-8");
+
+	$message = "";
 	
 	function getUSRating($movieinfo)
 	{
@@ -427,28 +429,28 @@
 
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Original Title</span><input type=\"text\" size=50 name=\"original_title\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;\">Original Title</span><input type=\"text\" size=50 name=\"original_title\" value=\"" . 
 					htmlspecialchars($movieinfo['original_title']) . "\" />\n";
 
 		print "<span class='formLabel'>Year</span> <input type=\"text\" size=4 name=\"year\" value=\"" . 
 					htmlspecialchars($movieinfo['year']) . "\" />\n";
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Director</span><input  size=50 type=\"text\" name=\"director\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;\">Director</span><input  size=50 type=\"text\" name=\"director\" value=\"" . 
 					htmlspecialchars($movieinfo['director']) . "\" />\n";
 
 		print "<span class='formLabel'>MPAA</span> <input type=\"text\" size=5 name=\"mpaa\" value=\"" . 
 					htmlspecialchars($movieinfo['mpaa']) . "\" />\n";
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Writers</span><input  size=50 type=\"text\" name=\"writers\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;\">Writers</span><input  size=50 type=\"text\" name=\"writers\" value=\"" . 
 					htmlspecialchars($movieinfo['writers']) . "\" />\n";
 
 		print "<span class='formLabel'>IMDB id</span> <input type=\"text\" size=10 name=\"imdbid\" value=\"" . 
 					htmlspecialchars($movieinfo['imdbid']) . "\" />\n";
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Tagline</span><input size=50 type=\"text\" name=\"tagline\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;\">Tagline</span><input size=50 type=\"text\" name=\"tagline\" value=\"" . 
 					htmlspecialchars($movieinfo['tagline']) . "\" />\n";
 
 		print "<span class='formLabel'>Runtime</span> <input type=\"text\" size=4 name=\"duration\" value=\"" . $movieinfo['duration'] . "\" />\n";
@@ -456,25 +458,25 @@
 			print "(" . $movieinfo['moviedbruntime'] . ")";
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;\" title='Separate with /'>Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;\" title='Separate with /'>Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
 					htmlspecialchars($movieinfo['genres']) . "\" />\n";
 
 
-		print "<BR/><span class='formlabel' style=\"display:inline-block;width:100px\">File Path</span><input size=50 type=\"text\" name=\"filepath\" value=\"" . 
+		print "<br/><span class='formlabel' style=\"display:inline-block;width:100px\">File Path</span><input size=50 type=\"text\" name=\"filepath\" value=\"" . 
 					$movieinfo['filepath'] . "\" />\n";
 
 		
-		print "<BR/><div style=\"display:inline-block;padding:10px\">";
+		print "<br/><div style=\"display:inline-block;padding:10px\">";
 		print "Overview<BR><textarea style=\"width:400px;height:200px\" name=\"overview\">" .
 					htmlspecialchars($movieinfo['overview'])  . 
-			  "</textarea><BR>\n";
+			  "</textarea><br/>\n";
 		print "</div>";
 
 		print "<div style=\"display:inline-block;padding:10px\">";
-		print "Cast<BR><textarea style=\"width:400px;height:200px\" name=\"actors\">" .
+		print "Cast<br/><textarea style=\"width:400px;height:200px\" name=\"actors\">" .
 					htmlspecialchars($movieinfo['actors'])  . 
 			  "</textarea>\n";
-		print "</div><BR/>";
+		print "</div><br/>";
 
 		if (!empty($movieinfo['localdbid']))
 			print "<input type=\"submit\" value=\"Save Changes\" />\n";
@@ -484,6 +486,8 @@
 
 		print "<br/>";
 
+		print '<div class="message">' . $message . '</div>';
+		
 		print "</div></div>";
 
 		ob_flush();
@@ -520,7 +524,7 @@
 		
 		print "<input type='hidden' name='allthumbs' value='". urlencode($movieinfo['allthumbs']) . "'/>";
 	
-		print "</div></FORM>";	
+		print "</div></form>";	
 	}
 
 
@@ -551,14 +555,14 @@
 
 			$resultfile  = generateCacheThumbnail($thumburl, $destpath);		
 			if ($resultfile) 
-				print "UPDATED THUMBNAIL<BR/>";
+				$message .= "UPDATED THUMBNAIL<br/>";
 		}
 
 
 		$db = new RoksDB(true);
 		$movieinfo = addMovieInfoToLocalDB($db, $movieinfo);
 		if (!empty($movieinfo['localdbid']))
-			print "UPDATED DATA<BR/>";
+			$message .= "UPDATED DATA<br/>";
 		$db->close();
 
 		showForm($movieinfo);
