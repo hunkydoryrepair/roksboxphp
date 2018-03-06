@@ -558,9 +558,10 @@
 	}
 	else {
 		print("<div class=\"headercontainer\">");
-		if (!empty($cmd)) print("<span class=\"backlink\"><A class=\"backlink\" href=\"..\">BACK</A></span>");
-		$subtitle = implode(":", array_slice($params, 1, sizeof($params)-2) );
-		print("<div class=\"topheader\">Movie List<BR/>" . $subtitle . "</div></div>\n");
+		if (!empty($cmd)) print("<span class=\"backlink\"><a class=\"backlink\" href=\"..\">BACK</a></span>");
+		$subtitle = htmlspecialchars(implode(":", array_slice($params, 1, sizeof($params)-2) ));
+		$toollink = "<a href='{$basepath}movielist-tools/moviemanager.php' class='toollink'>Tools</a>";
+		print("<div class=\"topheader\">Movie List<BR/>{$subtitle}</div>{$toollink}</div>\n");
 	}
 	// check if we have a trailing backslash. If we
 	// do, we do not need to prepend anything for our navigation
