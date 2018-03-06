@@ -22,7 +22,7 @@
 			global $MOVIE_DB_LOCATION_IS_RELATIVE;
 			global $MOVIE_DB_LOCATION;
 			if ($MOVIE_DB_LOCATION_IS_RELATIVE) {
-				if (! $MOVIE_DB_LOCATION[0] == '/' )
+				if ( ord($MOVIE_DB_LOCATION) != ord('/') )
 					$dbFile = __DIR__ . '/' . $MOVIE_DB_LOCATION;
 				else
 					$dbFile = __DIR__ . $MOVIE_DB_LOCATION;
@@ -30,6 +30,7 @@
 				$dbFile = $MOVIE_DB_LOCATION;
 			}
 				
+			error_log($dbFile);
 			$this->open($dbFile, $readwrite ? SQLITE3_OPEN_READWRITE : SQLITE3_OPEN_READONLY);
 			$this->createFunction('ShiftedThe','ShiftedThe');
 		}
