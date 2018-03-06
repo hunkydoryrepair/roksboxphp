@@ -1,6 +1,8 @@
 <?php 
 	include 'moviesetup.php';
 	include 'getid3/getid3.php';
+
+	header("Content-Type: text/html; charset=UTF-8");
 	
 	function getUSRating($movieinfo)
 	{
@@ -346,40 +348,55 @@
 		$movieinfo['filepath'] = $moviefile;
 		$movieinfo['moviedbid'] = $moviedbid;
 
-		// get runtime from file
-		$meta= new getID3();
-		$file = $meta->analyze($moviefile);
-		$duration = $file['playtime_seconds'];
-		$movieinfo['duration'] = round($duration / 60);
+		if (!$moviedbid) {
+			//
+			// adding as a custom movie with no moviedb link. Like a home movie.
+			//
+			$info = pathinfo($moviefile);
+			$title =  basename($filename,'.'.$info['extension']);
+			
+			$movieinfo['title'] = $title;
+			$movieinfo['original_title'] = $title;
+			$movieinfo['genres'] = 'Home Movies';
+		}
+		else
+		{
+		
+			// get runtime from file
+			$meta= new getID3();
+			$file = $meta->analyze($moviefile);
+			$duration = $file['playtime_seconds'];
+			$movieinfo['duration'] = round($duration / 60);
 
-		$moviedbinfo = getAPI3Result("movie/" . $moviedbid, "append_to_response=casts,releases,images");
+			$moviedbinfo = getAPI3Result("movie/" . $moviedbid, "append_to_response=casts,releases,images");
 
-//		$movieinfo['duration'] = $moviedbinfo['runtime'];
-		$movieinfo['title'] = $moviedbinfo['title'];
-		$movieinfo['imdbid'] = $moviedbinfo['imdb_id'];
-		$movieinfo['original_title'] = $moviedbinfo['original_title'];
-		$movieinfo['year'] = substr($moviedbinfo['release_date'],0,4);
-		$movieinfo['mpaa'] = getUSRating($moviedbinfo);
-		$movieinfo['director'] = getDirector($moviedbinfo);
-		$movieinfo['writers'] = getWriters($moviedbinfo);
-		$movieinfo['tagline'] = $moviedbinfo['tagline'];
-		$movieinfo['genres'] = getGenres($moviedbinfo);
-		$movieinfo['overview'] = $moviedbinfo['overview'];
-		$movieinfo['plot'] = $moviedbinfo['overview'];
-		$movieinfo['actors'] = getActors($moviedbinfo);
-		$movieinfo['moviedbruntime'] = $moviedbinfo['runtime'];
+	//		$movieinfo['duration'] = $moviedbinfo['runtime'];
+			$movieinfo['title'] = $moviedbinfo['title'];
+			$movieinfo['imdbid'] = $moviedbinfo['imdb_id'];
+			$movieinfo['original_title'] = $moviedbinfo['original_title'];
+			$movieinfo['year'] = substr($moviedbinfo['release_date'],0,4);
+			$movieinfo['mpaa'] = getUSRating($moviedbinfo);
+			$movieinfo['director'] = getDirector($moviedbinfo);
+			$movieinfo['writers'] = getWriters($moviedbinfo);
+			$movieinfo['tagline'] = $moviedbinfo['tagline'];
+			$movieinfo['genres'] = getGenres($moviedbinfo);
+			$movieinfo['overview'] = $moviedbinfo['overview'];
+			$movieinfo['plot'] = $moviedbinfo['overview'];
+			$movieinfo['actors'] = getActors($moviedbinfo);
+			$movieinfo['moviedbruntime'] = $moviedbinfo['runtime'];
 
-		$config = getAPI3Result("configuration");
+			$config = getAPI3Result("configuration");
 
-		// get the thumbnails
-		$thumbnails = "";
-		foreach($moviedbinfo['images']["posters"] as $poster) {
-			$fullpath = $config['images']['base_url'] . "original" . $poster['file_path'];
-			if (empty($movieinfo['thumb'])) $movieinfo['thumb'] = $fullpath;
-			$thumbnails .= "<thumb>" . $fullpath . "</thumb>";
-		}				
-		$movieinfo['allthumbs'] = $thumbnails;
-
+			// get the thumbnails
+			$thumbnails = "";
+			foreach($moviedbinfo['images']["posters"] as $poster) {
+				$fullpath = $config['images']['base_url'] . "original" . $poster['file_path'];
+				if (empty($movieinfo['thumb'])) $movieinfo['thumb'] = $fullpath;
+				$thumbnails .= "<thumb>" . $fullpath . "</thumb>";
+			}				
+			$movieinfo['allthumbs'] = $thumbnails;
+		}
+		
 		return $movieinfo;
 
 	}
@@ -391,12 +408,12 @@
 	{
 		global $API_KEY;
 
-		print "<FORM METHOD=POST ACTION=\"addmovie.php\">";
+		print "<form method=POST action='addmovie.php'>";
 
 		if (!empty($movieinfo['localdbid']))
 			print("<input type=\"hidden\" name=\"localdbid\" value=\"" . urlencode($movieinfo['localdbid']) . "\"/>");
 
-		print "<div class='leftcontent scroll-y' style='width:600px;'>";
+		print "<div class='leftcontent scroll-y editform'>";
 		print "<div style='padding:15px;'>";
 		print "<span style=\"display:inline-block;width:100px\">Title</span><input size=50 type=\"text\" name=\"title\" value=\"" . 
 					htmlspecialchars($movieinfo['title']) . "\" />\n";
@@ -440,7 +457,7 @@
 			print "(" . $movieinfo['moviedbruntime'] . ")";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\">Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
+		print "<BR/><span style=\"display:inline-block;width:100px\" title='Separate with /'>Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
 					htmlspecialchars($movieinfo['genres']) . "\" />\n";
 
 
@@ -462,7 +479,7 @@
 
 
 
-		print "<BR/>";
+		print "<br/>";
 
 		print "</div></div>";
 
@@ -488,18 +505,17 @@
 	}
 
 
-	header("Content-Type: text/html; charset=UTF-8");
 	
     
 ?>
 
-<HTML><HEAD><TITLE>Movie Information</TITLE>
-<?php include 'styles.php' ?>
+<html><head><title>Movie Information</title>
+<?php include 'styles.css' ?>
 
-</HEAD><BODY>
+</head><body>
 <div class='header row'>
 <H1>Movie Information</H1>
-<A class='navbutton' HREF="moviemanager.php">MANAGER</A>&nbsp;
+<a class='navbutton' HREF="moviemanager.php">MANAGER</a>&nbsp;
 </div>
 <div class="body row">
 <?php    
