@@ -11,7 +11,7 @@
 	header("Content-Type: text/html; charset=UTF-8");
 		
 	function parseFilename( $filename ) {
-		$title =  removeExbasename($filename);
+		$title =  removeExtension($filename);
 		$info['title'] = $title;
 		if (preg_match('/^(?P<title>.+) \((?P<year>.+)\)$/', $title, $matches)) {
 			$info['title'] = $matches['title'];
