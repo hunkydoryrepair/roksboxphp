@@ -348,12 +348,13 @@
 		$movieinfo['filepath'] = $moviefile;
 		$movieinfo['moviedbid'] = $moviedbid;
 
-		if (!$moviedbid) {
+		
+		if ($moviedbid == "0") {
 			//
 			// adding as a custom movie with no moviedb link. Like a home movie.
 			//
 			$info = pathinfo($moviefile);
-			$title =  basename($filename,'.'.$info['extension']);
+			$title =  basename($moviefile,'.'.$info['extension']);
 			
 			$movieinfo['title'] = $title;
 			$movieinfo['original_title'] = $title;
@@ -415,53 +416,46 @@
 
 		print "<div class='leftcontent scroll-y editform'>";
 		print "<div style='padding:15px;'>";
-		print "<span style=\"display:inline-block;width:100px\">Title</span><input size=50 type=\"text\" name=\"title\" value=\"" . 
+		print "<span class='formlabel' style=\"display:inline-block\">Title</span><input size=50 type=\"text\" name=\"title\" value=\"" . 
 					htmlspecialchars($movieinfo['title']) . "\" />\n";
 
-		if (!empty($movieinfo['localdbid']))
-			print "<input type=\"submit\" value=\"Save Changes\" />\n";
-		else 
-			print "<input type=\"submit\" value=\"Add\" />\n";
 
 
 
-
-		print "<BR/><span style=\"display:inline-block;width:100px\">Original Title</span><input type=\"text\" size=50 name=\"original_title\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Original Title</span><input type=\"text\" size=50 name=\"original_title\" value=\"" . 
 					htmlspecialchars($movieinfo['original_title']) . "\" />\n";
 
-		print "Year <input type=\"text\" size=4 name=\"year\" value=\"" . 
+		print "<span class='formLabel'>Year</span> <input type=\"text\" size=4 name=\"year\" value=\"" . 
 					htmlspecialchars($movieinfo['year']) . "\" />\n";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\">Director</span><input  size=50 type=\"text\" name=\"director\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Director</span><input  size=50 type=\"text\" name=\"director\" value=\"" . 
 					htmlspecialchars($movieinfo['director']) . "\" />\n";
 
-		print "MPAA <input type=\"text\" size=5 name=\"mpaa\" value=\"" . 
+		print "<span class='formLabel'>MPAA</span> <input type=\"text\" size=5 name=\"mpaa\" value=\"" . 
 					htmlspecialchars($movieinfo['mpaa']) . "\" />\n";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\">Writers</span><input  size=50 type=\"text\" name=\"writers\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Writers</span><input  size=50 type=\"text\" name=\"writers\" value=\"" . 
 					htmlspecialchars($movieinfo['writers']) . "\" />\n";
 
-		print "IMDB id <input type=\"text\" size=10 name=\"imdbid\" value=\"" . 
+		print "<span class='formLabel'>IMDB id</span> <input type=\"text\" size=10 name=\"imdbid\" value=\"" . 
 					htmlspecialchars($movieinfo['imdbid']) . "\" />\n";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\">Tagline</span><input size=50 type=\"text\" name=\"tagline\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;\">Tagline</span><input size=50 type=\"text\" name=\"tagline\" value=\"" . 
 					htmlspecialchars($movieinfo['tagline']) . "\" />\n";
 
-		print "Runtime <input type=\"text\" size=4 name=\"duration\" value=\"" . 
-					$movieinfo['duration'] . "\" />\n";
-		if( isset($movieinfo['moviedbruntime']) && 
-				$movieinfo['moviedbruntime'] != $movieinfo['duration']) 
+		print "<span class='formLabel'>Runtime</span> <input type=\"text\" size=4 name=\"duration\" value=\"" . $movieinfo['duration'] . "\" />\n";
+		if( isset($movieinfo['moviedbruntime']) && $movieinfo['moviedbruntime'] != $movieinfo['duration']) 
 			print "(" . $movieinfo['moviedbruntime'] . ")";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\" title='Separate with /'>Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;\" title='Separate with /'>Genres</span><input size=50 type=\"text\" name=\"genres\" value=\"" . 
 					htmlspecialchars($movieinfo['genres']) . "\" />\n";
 
 
-		print "<BR/><span style=\"display:inline-block;width:100px\">File Path</span><input size=50 type=\"text\" name=\"filepath\" value=\"" . 
+		print "<BR/><span class='formlabel' style=\"display:inline-block;width:100px\">File Path</span><input size=50 type=\"text\" name=\"filepath\" value=\"" . 
 					$movieinfo['filepath'] . "\" />\n";
 
 		
@@ -477,6 +471,10 @@
 			  "</textarea>\n";
 		print "</div><BR/>";
 
+		if (!empty($movieinfo['localdbid']))
+			print "<input type=\"submit\" value=\"Save Changes\" />\n";
+		else 
+			print "<input type=\"submit\" value=\"Add\" />\n";
 
 
 		print "<br/>";
@@ -485,7 +483,7 @@
 
 		ob_flush();
 		flush();
-		print "<div class=\"thumbscroller\" style='left:600px; padding:10px;'>";
+		print "<div class=\"thumbscroller\" style='padding:10px;'>";
 		print "<h1>Thumbnail</h1>";
 		$xmlthumbs = new SimpleXMLElement( "<thumbs>" . $movieinfo['allthumbs'] . "</thumbs>");
 

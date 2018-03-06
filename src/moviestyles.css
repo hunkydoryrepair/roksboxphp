@@ -1,5 +1,5 @@
-<STYLE type="text/css">
 body.movielist a {font-family:arial,sans-serif; font-size:12pt; font-weight:bold}
+body.movielist a:hover {background-color: lightgray;}
 span.movietitle {color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 14pt; font-style:italic}
 span.director {display:block; float:left; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
 span.runtime {display:block; float:right; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
@@ -13,4 +13,3 @@ img.thumbnail {width:206px; border:0}
 a.playlink {font-family:arial,sans-serif; font-size:14pt;  border:1px solid; padding: 2px; font-weight:bold; color:blue; background-color:lightgray; text-decoration:none}
 a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; background-color:lightgray; text-decoration:none}
 a.toollink {font-family:arial,sans-serif; font-size:14pt;  border:1px solid; padding: 3px; font-weight:bold; color:blue; background-color:lightgray; text-decoration:none; float: right;}
-</STYLE>

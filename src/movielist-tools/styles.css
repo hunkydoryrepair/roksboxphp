@@ -11,6 +11,7 @@ span.backlink {display:block; position:absolute; top:25px; left:25px; background
 .thumbblock {display:inline-block;margin:5px}
 a.backlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; text-decoration:none}
 span.playlink {display:block; padding-top:5px; clear:both}
+span.formlabel {width: 100px;}
 img.thumbnail {width:206px; border:0}
 a.playlink {font-family:arial,sans-serif; font-size:14pt;  border:1px solid; font-weight:bold; color:blue; background-color:lightgray; text-decoration:none}
 a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; background-color:lightgray; text-decoration:none}
@@ -28,7 +29,7 @@ a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; co
 	.navbutton { display:inline-block; background:#cccccc; border:1px solid; padding:2px;} 
 	.content { padding:20px; }
 	.leftcontent { position:absolute; width:50%; bottom:0; top:0; left:0;}
-	.thumbscroller  {overflow-y:auto;border-left:1px solid;position:absolute;top:0;bottom:0;left:350px;right:0}
+	.thumbscroller  {overflow-y:auto;border-left:1px solid;position:absolute;top:0;bottom:0;left:50%;right:0}
 	a.navbutton {text-decoration:none;}
 
 </STYLE>

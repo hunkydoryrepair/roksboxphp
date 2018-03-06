@@ -203,24 +203,22 @@
 					print "</FORM>";
 				}
 				
-				//
-				// if we didn't match ANYTHING, then support adding this with custom settings.
-				if (!$foundMatch) {
-					
-					print "<form method=POST action=\"addmovie.php\">";
-							
-					print "<input type=\"hidden\" name=\"moviepath\" value=\"" . urlencode($name) . "\"/>\n";
-		
-					print "<input type=\"radio\" name=\"moviedbid\" id=\"0\" value=\"0\" checked=checked />"
-					print "Add as custom video <br/>";
-					print "<input type=\"submit\" value=\"Add\" />\n";
-					print "</form>";
-					
-					
-				}
-	
-				
 			}
+			//
+			// if we didn't match ANYTHING, then support adding this with custom settings.
+			if (!$foundMatch) {
+				
+				print "<form method=POST action=\"addmovie.php\">";
+						
+				print "<input type=\"hidden\" name=\"moviepath\" value=\"" . urlencode($name) . "\"/>\n";
+	
+				print "<input type=\"radio\" name=\"moviedbid\" value=\"0\" checked=checked />";
+				print "Add as custom video <br/>";
+				print "<input type=\"submit\" value=\"Add\" />\n";
+				print "</form>";
+				
+				
+			}			
 		}
 	}
 

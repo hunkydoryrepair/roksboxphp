@@ -4,7 +4,7 @@
 	require("movielist-tools/RoksDB.php");
 	require("movielist-tools/common.php");
 	
-	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false;
+	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false || $_GET["ROKS"] !== null;
 	$GOOGLETV     =  stripos($_SERVER['HTTP_USER_AGENT'],'GoogleTV') !== false;
 
 	//
@@ -13,6 +13,14 @@
 	//
 	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 	
+	
+	function hexColorAllocate($im,$hex){
+		$hex = ltrim($hex,'#');
+		$a = hexdec(substr($hex,0,2));
+		$b = hexdec(substr($hex,2,2));
+		$c = hexdec(substr($hex,4,2));
+		return imagecolorallocate($im, $a, $b, $c); 
+	}	
 	
 	
 	//
@@ -27,20 +35,37 @@
 		
 		$image = imagecreatetruecolor($width, $height);
 
-		$gray = imagecolorallocate( $image, 0x99,0x99,0x99 );
+		$gray = hexColorAllocate( $image, $THUMBNAIL_BGCOLOR );
 		imagefilledrectangle($image, 0,0, $width-1, $height-1, $gray );
 		
 		imagesetthickness( $image, 4 );
-		$blue = imagecolorallocate( $image, 0x00,0x00,0x33 );
+		$blue = imagecolorallocate( $image, $THUMBNAIL_TEXTCOLOR );
+		
+		// draw a border
 		imagerectangle($image, 1,1, $width-2, $height-2, $blue );
 
-		$size = 5;
-		$text_width = imagefontwidth($size)*strlen($text); 
-		while( $size > 1 && $text_width > $width-8) {
-			$size = $size - 1;
-			$text_width = imagefontwidth($size)*strlen($text); 
+		$degree = 0;
+		if (strlen($text) > 8) $degree = -45;
+		if (file_exists( $font )) {
+			$size = 40;
+			$text_width = $width;
+			while ( $size > 1 && $text_width > $width - 8) {
+				$size = $size - 1;
+				$r = imagettfbbox($size, $degree, $font, $text );
+				$text_width = $r[2] - $r[0];
+			}
+			imagettftext($image, $size, $degree, $font, $text);
 		}
-		imagestring($image, $size, ($width-$text_width)/2, $height/3, $text, $blue);
+		else {
+			// use built in.
+			$size = 5;
+			$text_width = imagefontwidth($size)*strlen($text); 
+			while( $size > 1 && $text_width > $width-8) {
+				$size = $size - 1;
+				$text_width = imagefontwidth($size)*strlen($text); 
+			}
+			imagestring($image, $size, ($width-$text_width)/2, $height/3, $text, $blue);
+		}
 		
 		imagejpeg($image, $filepath, 80);
 		imagedestroy($image);
@@ -127,15 +152,20 @@
 		if (empty($thumb))
 			$thumb = $xmlthumbs->thumb[0];
 
-		$filepath = $filebase . ".tbn";
+		$filepath = $filebase . '.tbn';
 
-		$image = imagecreatefromjpeg($thumb);
-		if (!$image) {
-			$image = imagecreatefrompng($thumb);
+		if (empty($thumb)) {
+			# generate a thumbnail from the name
+			return generateTextThumbnail( $movie['c00'], $filepath);
+		} else {
+			$image = imagecreatefromjpeg($thumb);
 			if (!$image) {
-				// delete it.
-				error_log("Unable to read as JPEG: " . $thumb);
-				return NULL;
+				$image = imagecreatefrompng($thumb);
+				if (!$image) {
+					// delete it.
+					error_log("Unable to read as JPEG: " . $thumb);
+					return NULL;
+				}
 			}
 		}
 		$w = imagesx($image);
@@ -365,7 +395,7 @@
 	$db = new RoksDB();
 	
 	//
-	// check last parameter for xml info.
+	// check last parameter for xml, jpg or mv4 info.
 	//
 	if ($params && sizeof($params) > 2 && (strcasecmp($cmd,"FILES")!==0  && strcasecmp($cmd,"XTRAS")!==0)) {
 		$lastparam = $params[sizeof($params)-1];
@@ -490,6 +520,7 @@
 				} else {
 					$file = $movie['strFileName'];
 					$idx = strrpos($file,".");
+					// remove extension
 					if ($idx) $file = substr($file, 0, $idx);
 					$path = $movie['strPath'] . $file;
 				}
@@ -508,7 +539,7 @@
 					} else {
 						header("HTTP/1.1 404 Not Found");
 						header("Status: 404 Not Found");
-						print( "Not Found: Movie information found but not file on file system. {$path}");
+						print( "Not Found: Movie information found but no file on file system. {$path}");
 					}
 				}
 			} else   {
@@ -712,8 +743,13 @@
 		if ( $i >= 5 ) {
 			foreach( range('A','Z') as $letter) {
 				$cnt = $db->querySingle('SELECT count(c00) FROM movie WHERE c00 like "%' . SQLite3::escapeString($search . $letter) . '%"');
-				if ($cnt > 0)
+				if ($cnt > 0) {
 					print("<TR><TD><A HREF=\"" . $search . $letter . "/\">" . $search . $letter . "</A></TD></TR>\n");
+					if ($ROKSBOX_MODE) {
+						// provide a thumbnail for the letter
+						print("<tr><td><a href=\"" . $search . $letter . ".jpg\">" . $search . $letter . ".jpg</a></td></tr>\n");
+					}
+				}
 			}
 		}
 		printMovies($movies);
