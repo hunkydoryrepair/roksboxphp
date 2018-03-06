@@ -9,7 +9,7 @@
 	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 	
 ?>
-
+<!DOCTYPE html>
 <html><head><title>RoksBox Movie Manager</title>
 
 <link rel="stylesheet" href="<?php echo $basepath ?>styles.css" >
