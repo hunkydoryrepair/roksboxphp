@@ -54,8 +54,8 @@ if($hash===$hash_file)
 	// when complete, assemble the final file.
 	$pieces = 0;
 	for( $i=0; $i < $total; $i++) {
-		$filename = $dir."/".$filename."-".$i."-".$total;
-		if (file_exists($filename)) $pieces++;
+		$tmpname = $dir."/".$filename."-".$i."-".$total;
+		if (file_exists($tmpname)) $pieces++;
 	}
 	
 	$result = array
@@ -63,7 +63,7 @@ if($hash===$hash_file)
 		'filename' => $filename,
 		'start' => $index,
 		'end' => $total,
-		'percent' => intval((pieces) * 100 / $total),
+		'percent' => intval(($pieces) * 100 / $total),
 		'hash' => $hash_file
 	);
 	
@@ -72,16 +72,16 @@ if($hash===$hash_file)
 		// time to assemble the pieces
 		//
 		for( $i=0; $i < $total; $i++) {
-			$filename = $dir."/".$filename."-".$i."-".$total;
-			$input = file_get_contents($filename);
+			$tmpname = $dir."/".$filename."-".$i."-".$total;
+			$input = file_get_contents($tmpname);
 			if ($i === 0)
 				file_put_contents($finaltarget, $input);
 			else
 				file_put_contents($finaltarget, $input, FILE_APPEND);
-			unlink($filename);
+			unlink($tmpname);
 		}
 	}
-
+}
 else
 {
 	$result = array

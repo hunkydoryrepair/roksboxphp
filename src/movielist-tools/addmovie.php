@@ -156,112 +156,112 @@
 		if ($localid) 
 		{
 
-		$movieinfo['localdbid'] = $localid;
+			$movieinfo['localdbid'] = $localid;
 
-		//
-		// remove all existing genres
-		//
-		$db->exec("DELETE FROM genrelinkmovie WHERE idMovie='" . $localid . "'");
+			//
+			// remove all existing genres
+			//
+			$db->exec("DELETE FROM genrelinkmovie WHERE idMovie='" . $localid . "'");
 
-		//
-		// update genres
-		//
-		$genres = explode("/", $movieinfo['genres']);
-		foreach( $genres as $genre )
-		{
-			$genre = trim($genre);
-			if (empty($genre)) continue;
-
-			// search db if this genre exists
-			$idgenre = $db->querySingle("SELECT idGenre FROM genre WHERE strGenre like '" . SQLite3::escapeString($genre) . "'");
-			if (empty($idgenre))
+			//
+			// update genres
+			//
+			$genres = explode("/", $movieinfo['genres']);
+			foreach( $genres as $genre )
 			{
-				if ($db->exec("INSERT INTO genre (strGenre) VALUES ('" . SQLite3::escapeString($genre) . "')"))
+				$genre = trim($genre);
+				if (empty($genre)) continue;
+
+				// search db if this genre exists
+				$idgenre = $db->querySingle("SELECT idGenre FROM genre WHERE strGenre like '" . SQLite3::escapeString($genre) . "'");
+				if (empty($idgenre))
 				{
-					$idgenre = $db->lastInsertRowID();
+					if ($db->exec("INSERT INTO genre (strGenre) VALUES ('" . SQLite3::escapeString($genre) . "')"))
+					{
+						$idgenre = $db->lastInsertRowID();
+					}
 				}
+
+				// associate genre with movie
+				$db->exec("INSERT INTO genrelinkmovie (idGenre, idMovie) VALUES ('" . $idgenre . "','" . $localid . "')");
 			}
 
-			// associate genre with movie
-			$db->exec("INSERT INTO genrelinkmovie (idGenre, idMovie) VALUES ('" . $idgenre . "','" . $localid . "')");
-		}
 
+			//
+			// remove all existing people
+			//
+			$db->exec("DELETE FROM actorlinkmovie WHERE idMovie='" . $localid . "'");
 
-		//
-		// remove all existing people
-		//
-		$db->exec("DELETE FROM actorlinkmovie WHERE idMovie='" . $localid . "'");
-
-		//
-		// update actors
-		//
-		$actors = explode("/", $movieinfo['actors']);
-		foreach( $actors as $actor )
-		{
-			$actor = trim($actor);
-			if (empty($actor)) continue;
-
-			// split actor and role
-			$spl = explode(" AS ", $actor);
-
-			// search db if this person exists
-			$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($spl[0])) . "'");
-			if (empty($idactor))
+			//
+			// update actors
+			//
+			$actors = explode("/", $movieinfo['actors']);
+			foreach( $actors as $actor )
 			{
-				if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($spl[0])) . "')"))
+				$actor = trim($actor);
+				if (empty($actor)) continue;
+
+				// split actor and role
+				$spl = explode(" AS ", $actor);
+
+				// search db if this person exists
+				$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($spl[0])) . "'");
+				if (empty($idactor))
 				{
-					$idactor = $db->lastInsertRowID();
+					if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($spl[0])) . "')"))
+					{
+						$idactor = $db->lastInsertRowID();
+					}
 				}
+
+				// associate person with movie
+				$db->exec("INSERT INTO actorlinkmovie (idActor, idMovie, strRole) VALUES ('" . $idactor . "','" . $localid . "','" 
+							. SQLite3::escapeString(trim($spl[1])) . "')");
 			}
 
-			// associate person with movie
-			$db->exec("INSERT INTO actorlinkmovie (idActor, idMovie, strRole) VALUES ('" . $idactor . "','" . $localid . "','" 
-						. SQLite3::escapeString(trim($spl[1])) . "')");
-		}
-
-		// associate director
-		$db->exec("DELETE FROM directorlinkmovie WHERE idMovie='" . $localid . "'");
-		$actors = explode("/", $movieinfo['director']);
-		foreach( $actors as $actor )
-		{
-			$actor = trim($actor);
-			if (empty($actor)) continue;
-
-			// search db if this person exists
-			$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($actor)) . "'");
-			if (empty($idactor))
+			// associate director
+			$db->exec("DELETE FROM directorlinkmovie WHERE idMovie='" . $localid . "'");
+			$actors = explode("/", $movieinfo['director']);
+			foreach( $actors as $actor )
 			{
-				if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($actor)) . "')"))
+				$actor = trim($actor);
+				if (empty($actor)) continue;
+
+				// search db if this person exists
+				$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($actor)) . "'");
+				if (empty($idactor))
 				{
-					$idactor = $db->lastInsertRowID();
+					if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($actor)) . "')"))
+					{
+						$idactor = $db->lastInsertRowID();
+					}
 				}
+
+				// associate person with movie
+				$db->exec("INSERT INTO directorlinkmovie (idDirector, idMovie) VALUES ('" . $idactor . "','" . $localid . "')");
 			}
 
-			// associate person with movie
-			$db->exec("INSERT INTO directorlinkmovie (idDirector, idMovie) VALUES ('" . $idactor . "','" . $localid . "')");
-		}
-
-		// associate writers
-		$db->exec("DELETE FROM writerlinkmovie WHERE idMovie='" . $localid . "'");
-		$actors = explode("/", $movieinfo['writers']);
-		foreach( $actors as $actor )
-		{
-			$actor = trim($actor);
-			if (empty($actor)) continue;
-
-			// search db if this person exists
-			$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($actor)) . "'");
-			if (empty($idactor))
+			// associate writers
+			$db->exec("DELETE FROM writerlinkmovie WHERE idMovie='" . $localid . "'");
+			$actors = explode("/", $movieinfo['writers']);
+			foreach( $actors as $actor )
 			{
-				if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($actor)) . "')"))
-				{
-					$idactor = $db->lastInsertRowID();
-				}
-			}
+				$actor = trim($actor);
+				if (empty($actor)) continue;
 
-			// associate person with movie
-			$db->exec("INSERT INTO writerlinkmovie (idWriter, idMovie) VALUES ('" . $idactor . "','" . $localid . "')");
-		}
+				// search db if this person exists
+				$idactor = $db->querySingle("SELECT idActor FROM actors WHERE strActor like '" . SQLite3::escapeString(trim($actor)) . "'");
+				if (empty($idactor))
+				{
+					if ($db->exec("INSERT INTO actors (strActor) VALUES ('" . SQLite3::escapeString(trim($actor)) . "')"))
+					{
+						$idactor = $db->lastInsertRowID();
+					}
+				}
+
+				// associate person with movie
+				$db->exec("INSERT INTO writerlinkmovie (idWriter, idMovie) VALUES ('" . $idactor . "','" . $localid . "')");
+			}
 
 		}
 		else 
@@ -296,9 +296,13 @@
 			$movieinfo['overview'] = $movie['c01'];
 			$movieinfo['plot'] = $movie['c02'];
 			$movieinfo['allthumbs'] = $movie['c08'];
+			
 
 			if (preg_match('/\<thumb\>(?P<thumb>.*)\<\/thumb\>/', $movieinfo['allthumbs'], $matches)) {
 				$movieinfo['thumb'] = $matches['thumb'];
+			}
+			else {
+				$movieinfo['thumb'] = '';
 			}
 	
 			$actors = $db->query("SELECT * FROM actorlinkmovie JOIN actors ON actorlinkmovie.idActor=actors.idActor WHERE idMovie='" . $localdbid . "'");
@@ -488,15 +492,31 @@
 		$xmlthumbs = new SimpleXMLElement( "<thumbs>" . $movieinfo['allthumbs'] . "</thumbs>");
 
 		$cnt = $xmlthumbs->thumb->count(); 
+		$found = false;
 		for( $i=0; $i<$cnt; $i++ ) {
 			$url = $xmlthumbs->thumb[$i];
 			
 			print "<div style=\"float:left;margin:10px\"><label for=\"img" . $i . "\"><IMG height=\"256\" src=\"" . $url . "?api_key=" . $API_KEY . 
 			            "\"/></label><BR>";
 			print "<input type=\"radio\" name=\"thumb\" id=\"img" . $i . "\" value=\"" . urlencode($url) . "\"" ;
-			if ($url == $movieinfo['thumb']) print " checked";
+			if (isset($movieinfo['thumb']) && $url == $movieinfo['thumb']) {
+				print " checked=checked";
+				$found = true;
+			}
 			print "/>&nbsp;Choose</div>";
 		}
+		if (!$found && isset($movieinfo['localdbid'])) {
+			//
+			// display the current one on file.
+			//
+			$url = $REDIRECT_MEDIA_BASE . $movieinfo['localdbid'] . ".jpg";
+			print "<div style=\"float:left;margin:10px\"><label for=\"img" . $i . "\"><img height=\"256\" src=\"" . $url . "\"/></label><br>";
+			print "<input type=\"radio\" name=\"thumb\" id=\"img" . $i . "\" value=\"" . urlencode($url) . "\"" ;
+			print "checked=checked />&nbsp;Choose</div>";
+			
+		}
+		
+		
 		print "<input type='hidden' name='allthumbs' value='". urlencode($movieinfo['allthumbs']) . "'/>";
 	
 		print "</div></FORM>";	

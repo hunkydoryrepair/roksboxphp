@@ -4,6 +4,7 @@
 	// the MOVIE_FS_FILES_BASE with MOVIE_HTTP_FILES_BASE
 	$MOVIE_HTTP_FILES_BASE = "/movies/";
 	$MOVIE_FS_FILES_BASE = "/media/usb/webroot/movies/";
+	$REDIRECT_MEDIA_BASE = "/media/movielist.php/movies/";	
 	// specify where the database location is. If it is relative to the RoksDB.php file,
 	// set $MOVIE_DB_LOCATION_IS_RELATIVE to true
 	$MOVIE_DB_LOCATION = "../../db/Movies.db";

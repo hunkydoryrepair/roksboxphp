@@ -10,6 +10,8 @@
 	}
 	
 	var form;
+	var starttime=0;
+	var sizeuploaded=0;
 	
 	if(support())
 	{
@@ -120,6 +122,7 @@
 	
 		function sendRequest(input)
 		{
+			starttime = new Date().getTime();
 			var blobs = input.files;
 			async(blobs, 0, blobs.length);
 		}
@@ -179,7 +182,7 @@
 		};
 	
 		/**
-		 * Performs actual upload, adjustes progress bars
+		 * Performs actual upload, adjust progress bars
 		 *
 		 * @param blob
 		 * @param index
@@ -218,16 +221,35 @@
 				        	
 				        	if(typeof j['error'] !== undefined && j['error']==='E_HASH')
 				        	{
-									window.setTimeout(function()
-									{
-										uploadFile(blob, index, start, slicesTotal, callback);
-									}, 100);
+								// error, try again.
+								window.setTimeout(function()
+								{
+									uploadFile(blob, index, start, slicesTotal, callback);
+								}, 100);
 				        	}
 				        	else
 				        	{
 					        	var toupload = document.getElementById('toupload');
 					        	var lis = toupload.getElementsByTagName('li');
 				
+								// successfully send end-start
+								sizeuploaded += end-start;
+								
+								// calculate average upload speed
+								var mseconds = (new Date().getTime()) - starttime;
+								if (mseconds > 0) {
+									var rate = sizeuploaded / mseconds; // byte per msecond == KB/s
+									rate = rate * 8; // Kb/s
+									var speed = document.getElementById('uploadspeed');								
+									var units = " Kb/s";
+									if (rate > 5000000) { rate /= 1000; units = " Mb/s"; }
+									if (rate < 10) rate = rate.toFixed(1);
+									else rate = rate.toFixed(0);
+									speed.innerHTML = rate + units;
+								}
+								
+								
+								
 					        	for(var i in lis)
 					        	{
 					        		if(typeof lis[i]!='undefined' && typeof lis[i].getAttribute=='function')
@@ -258,7 +280,8 @@
 						        		}
 					        		}
 					        	}
-				
+								
+
 								index++;
 								if(index<slicesTotal)
 								{

@@ -4,7 +4,7 @@
 	require("movielist-tools/RoksDB.php");
 	require("movielist-tools/common.php");
 	
-	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false || $_GET["ROKS"] !== null;
+	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false || isset($_GET["ROKS"]);
 	$GOOGLETV     =  stripos($_SERVER['HTTP_USER_AGENT'],'GoogleTV') !== false;
 
 	//
@@ -359,7 +359,18 @@
 			} else {
 				$select = "SELECT * from movieview WHERE c00='" . SQLite3::escapeString($title) . "'";
 			}
-			return $db->querySingle($select, true);
+			$movie =  $db->querySingle($select, true);
+			if (!$movie) {
+				//
+				// try as ID. We have to try as title first because some movies may have names like "13" or "100"
+				// and those are also idMovie.
+				//
+				if (preg_match('/^[0-9]*$/', $title) != 0 ) {
+					$select = "SELECT * from movieview WHERE idMovie='" . SQLite3::escapeString($title) . "'";
+					$movie =  $db->querySingle($select, true);
+				}
+			}
+			return $movie;
 		}
 		return NULL;
 
