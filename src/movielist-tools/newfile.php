@@ -45,6 +45,11 @@
 		<script type="text/javascript" src="js/upload.js"></script>
 	</head>
 	<body>
+<div class="header row">
+<h1>Upload New Videos</h1>
+<a class='navbutton' HREF="moviemanager.php">MANAGER</a>&nbsp;
+</div>
+	
 		<form action="" method="post" enctype="multipart/form-data">
 			<input type="file" name="file" multiple="multiple"/>
 			<input type="submit" />

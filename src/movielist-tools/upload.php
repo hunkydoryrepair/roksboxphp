@@ -61,9 +61,9 @@ $hash_file = md5($input);
 if($hash===$hash_file)
 {
 	if ($index === 0)
-		file_put_contents($finaltarget+'.tmp', $input);
+		file_put_contents($finaltarget.'.tmp', $input);
 	else
-		file_put_contents($finaltarget+'.tmp', $input, FILE_APPEND);	
+		file_put_contents($finaltarget.'.tmp', $input, FILE_APPEND);	
 	
 	$result = array
 	(
@@ -75,7 +75,7 @@ if($hash===$hash_file)
 	);
 	
 	if ($index+1 == $total ) {
-		rename($finaltarget+'.tmp',$finaltarget);
+		rename($finaltarget.'.tmp',$finaltarget);
 	}
 }
 else
