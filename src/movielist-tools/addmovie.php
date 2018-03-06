@@ -512,7 +512,7 @@
 			//
 			$url = $REDIRECT_MEDIA_BASE . $movieinfo['localdbid'] . ".jpg";
 			print "<div style=\"float:left;margin:10px\"><label for=\"img" . $i . "\"><img height=\"256\" src=\"" . $url . "\"/></label><br>";
-			print "<input type=\"radio\" name=\"thumb\" id=\"img" . $i . "\" value=\"" . urlencode($url) . "\"" ;
+			print "<input type=\"radio\" name=\"thumb\" id=\"img" . $i . "\" value=\"\"" ;
 			print "checked=checked />&nbsp;Choose</div>";
 			
 		}

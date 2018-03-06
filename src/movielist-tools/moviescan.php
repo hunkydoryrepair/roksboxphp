@@ -260,8 +260,8 @@
                 var div = $("#file" + divnum);
                 var fname = $("#file" + divnum + "_filename");
 				if (console.log)
-					console.log( url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + encodeURIComponent(fname.val()) );
-                div.load(url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + encodeURIComponent(fname.val()));
+					console.log( url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + (fname.val()) );
+                div.load(url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + (fname.val()));
                 return false;   
             });            
             
