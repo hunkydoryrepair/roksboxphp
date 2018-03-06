@@ -39,7 +39,7 @@
 
     print "</div><div class=\"body row scroll-y\">";    
     
-	$db = new RoksDB();
+	$db = new RoksDB(true);
     
     
 	$mypath = "";
