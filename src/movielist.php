@@ -549,7 +549,7 @@
 	
 	header("Content-Type: text/html; charset=UTF-8");
 	print('<html><head><title>Movie List</title>');
-	print('<link rel="stylesheet" href="{$basepath}moviestyles.css">');
+	print("<link rel=\"stylesheet\" href=\"{$basepath}moviestyles.css\">");
 	
 	print("</head>\n<body>\n");
 	
