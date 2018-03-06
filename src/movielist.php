@@ -557,9 +557,9 @@
 	}
 	
 	
-	header("Content-Type: text/html; charset=UTF-8");
-	print('<!DOCTYPE html><html>\n<head>\n<title>Movie List</title>\n');
-	print('<link rel="stylesheet" href="{$basepath}moviestyles.css">');
+	header('Content-Type: text/html; charset=UTF-8');
+	print('<!DOCTYPE html><html><head><title>Movie List</title>');
+	print("<link rel=\"stylesheet\" href=\"{$basepath}moviestyles.css\">");
 	
 	print("</head>\n<body class='movielist'>\n");
 	
