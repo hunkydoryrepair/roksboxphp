@@ -412,6 +412,7 @@
 	function showForm( $movieinfo )
 	{
 		global $API_KEY;
+		global $REDIRECT_MEDIA_BASE;
 
 		print "<form method=POST action='addmovie.php'>";
 
