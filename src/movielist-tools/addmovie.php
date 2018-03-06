@@ -340,7 +340,7 @@
 		$movieinfo['overview'] = $params['overview'];
 		$movieinfo['plot'] = $params['overview'];
 		$movieinfo['actors'] = $params['actors'];
-		$movieinfo['thumb'] = urldecode($params['thumb']);
+		$movieinfo['thumb'] = isset($params['thumb']) ? urldecode($params['thumb']) : '';
 		$movieinfo['allthumbs'] = urldecode($params['allthumbs']);
 
 		return $movieinfo;
@@ -415,6 +415,7 @@
 	{
 		global $API_KEY;
 		global $REDIRECT_MEDIA_BASE;
+		global $message;
 
 		print "<form method=POST action='addmovie.php'>";
 
