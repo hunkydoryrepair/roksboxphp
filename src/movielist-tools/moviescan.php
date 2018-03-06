@@ -1,5 +1,9 @@
 <?php 
-
+	/**
+	 * Author Garr Godfrey
+	 * Scan files, look for .mp4 and look up information on movie or TV database to guess the movie.
+	 *
+	 */
 	include 'moviesetup.php';
 	include 'TVDB.php';
 	
@@ -76,6 +80,7 @@
 //		var_dump($fileinfo);
 
 		if ($lookup) {
+			$foundMatch = false;
 			$query = "query=" . rawurlencode($fileinfo['title']) ;
 	
 			if ( !empty($fileinfo['year']) )
@@ -83,6 +88,7 @@
 	
 			$matches = getAPI3Result("search/movie", $query );
 			if ($matches['total_results'] > 0) {
+				$foundMatch = true;
 				print "<FORM METHOD=POST ACTION=\"addmovie.php\">";
 						
 				print "<input type=\"hidden\" name=\"moviepath\" value=\"" . urlencode($name) . "\"/>\n";
@@ -126,6 +132,7 @@
 					print '<BR>Add To Existing TV Show:<BR>';
 	
 					while( $tvshow = $tvshows->fetchArray() ) {
+						$foundMatch = true;
 						print "<input type=\"radio\" name=\"showid\" id=\"" . $tvshow['idShow']  . 
 												"\" value=\"" . $tvshow['idShow'] . "\"";
 						if ($i==0) print " checked";
@@ -152,6 +159,7 @@
 					if ($tvshow) {
 						// if it is an exact match, we should already have shown it.
 						if (strcasecmp( $showinfo->seriesName, $seriesname ) != 0) {
+							$foundMatch = true;
 							print "<input type=\"radio\" name=\"showid\" id=\"" . $tvshow['idShow']  . 
 													"\" value=\"" . $tvshow['idShow'] . "\"";
 							if ($i==0) print " checked";
@@ -177,13 +185,12 @@
 
 					$i = 0;
 					foreach( $newshows as $showinfo ) {
-//						var_dump($showinfo);
+						$foundMatch = true;
 						print "<input type=\"radio\" name=\"tvdbid\" id=\"" . $showinfo->seriesid  . 
 												"\" value=\"" . $showinfo->seriesid . "\"";
 						if ($i==0) print " checked";
 						print "/>";
 						print "<label for='" . $showinfo->seriesid . "'>";
-//						var_dump($showinfo);
 						if ($showinfo->FirstAired)
 							$released = substr($showinfo->FirstAired,0,4);
 						else
@@ -194,6 +201,22 @@
 					}
 					print "<input type=\"submit\" value=\"Add\" />\n";
 					print "</FORM>";
+				}
+				
+				//
+				// if we didn't match ANYTHING, then support adding this with custom settings.
+				if (!$foundMatch) {
+					
+					print "<form method=POST action=\"addmovie.php\">";
+							
+					print "<input type=\"hidden\" name=\"moviepath\" value=\"" . urlencode($name) . "\"/>\n";
+		
+					print "<input type=\"radio\" name=\"moviedbid\" id=\"0\" value=\"0\" checked=checked />"
+					print "Add as custom video <br/>";
+					print "<input type=\"submit\" value=\"Add\" />\n";
+					print "</form>";
+					
+					
 				}
 	
 				
@@ -223,10 +246,12 @@
 
 ?>
 		<HTML><HEAD><TITLE>Scan for New Movies</TITLE>
-<?php include 'styles.php' ?>
+<?php include 'styles.css' ?>
 		<script src="http://code.jquery.com/jquery-1.4.2.min.js"></script> 
 
 		<script>
+		
+
 		function change(divnum) {
             var field = $("#file" + divnum + "_field");
             var sp = $("#file" + divnum + "_span");
@@ -250,64 +275,54 @@
     
         
 		</script>
-		</HEAD><BODY>
+		</head><b>
 <div class='header row'><div style='padding-left:15px;'>
 <h1>Scan for New Files</h1>
-        <A class='navbutton' HREF="moviemanager.php">MANAGER</A><BR/>
+        <a class='navbutton' HREF="moviemanager.php">MANAGER</a><br/>
 </div></div><div class='body row scroll-y'><div style='padding:15px'>
 <?php
 
-	$divcount = 1;
-	foreach($objects as $name => $object){
-		if (preg_match('/\/DVD Extras\//', $name)) continue;
+		$divcount = 1;
+		foreach($objects as $name => $object){
+			if (preg_match('/\/DVD Extras\//', $name)) continue;
 
-		if (preg_match('/\.m4v$/', $name) != 0 ||
-          preg_match('/\.mp4$/', $name) != 0 ||
-		preg_match('/\.mkv$/', $name) != 0) {
-			$res = $db->querySingle($select = 'SELECT * FROM files JOIN path ON files.idPath = path.idPath WHERE strFileName like \'' 
-					. SQLite3::escapeString(basename($name)) . '\' AND strPath like \'' .
-					SQLite3::escapeString(dirname($name)) . '/\'');  
+			if (preg_match('/\.m4v$/', $name) != 0 ||
+			  preg_match('/\.mp4$/', $name) != 0 ||
+			preg_match('/\.mkv$/', $name) != 0) {
+				$res = $db->querySingle($select = 'SELECT * FROM files JOIN path ON files.idPath = path.idPath WHERE strFileName like \'' 
+						. SQLite3::escapeString(basename($name)) . '\' AND strPath like \'' .
+						SQLite3::escapeString(dirname($name)) . '/\'');  
 
-			// test if this file exists in the DB
-			if (empty($res)) {
-				print "<div style='border:1px solid; margin:5px;'>";
+				// test if this file exists in the DB
+				if (empty($res)) {
+					print "<div style='border:1px solid; margin:5px;'>";
 
-				print "<input style=\"display:none\" type='text'  id='file" . $divcount . "_field' value='" . htmlentities( basename($name) ) . "'/>";
-				print "<input  type='hidden'  id='file" . $divcount . "_filename' value='" . urlencode( $name ) . "'/>";
-				print "<span id='file" . $divcount . "_span'>" .  htmlentities( basename($name) ) . "</span>";
-				print "<button id='file" . $divcount . "_button' onclick=\"change(" . $divcount . ");\" type='button'>Edit</button>";
-				print( "<BR/>" );
-				print( "<div id='file" . $divcount . "'>" );
-				searchAndShowForm(  $db, $name, $name, true );
-				print( "</div></div>" );
-				$divcount++;
-				ob_flush();
-				flush();
-			}
-			else {
-				//searchAndShowForm( $db, $name, $name, false );
+					print "<input style=\"display:none\" type='text'  id='file" . $divcount . "_field' value='" . htmlentities( basename($name) ) . "'/>";
+					print "<input  type='hidden'  id='file" . $divcount . "_filename' value='" . urlencode( $name ) . "'/>";
+					print "<span id='file" . $divcount . "_span'>" .  htmlentities( basename($name) ) . "</span>";
+					print "<button id='file" . $divcount . "_button' onclick=\"change(" . $divcount . ");\" type='button'>Edit</button>";
+					print( "<BR/>" );
+					print( "<div id='file" . $divcount . "'>" );
+					searchAndShowForm(  $db, $name, $name, true );
+					print( "</div></div>" );
+					$divcount++;
+					ob_flush();
+					flush();
+				}
+				else {
+					//searchAndShowForm( $db, $name, $name, false );
+				}
 			}
 		}
+		
+		print "</div></div></body></html>";
+
+		$db->close();
 	}
-	
-	print "</div></div></BODY></HTML>\n";
-
-	$db->close();
-    }
-    else {
-        // just return the single form for this one element
-        $name = $_REQUEST['file'];
-        searchAndShowForm( $name, $searchstring );
-        ob_flush();
-        flush();
-    }
-
-
-
-	?>
-
-
-
-
-
-
+	else {
+		// just return the single form for this one element
+		$name = $_REQUEST['file'];
+		searchAndShowForm( $name, $searchstring );
+		ob_flush();
+		flush();
+	}

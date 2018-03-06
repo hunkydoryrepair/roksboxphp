@@ -27,7 +27,7 @@ a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; co
     .body.row { top: 75px; bottom: 0px;  border:1px solid;}
 	.navbutton { display:inline-block; background:#cccccc; border:1px solid; padding:2px;} 
 	.content { padding:20px; }
-	.leftcontent { position:absolute; width:300px; bottom:0; top:0; left:0;}
+	.leftcontent { position:absolute; width:50%; bottom:0; top:0; left:0;}
 	.thumbscroller  {overflow-y:auto;border-left:1px solid;position:absolute;top:0;bottom:0;left:350px;right:0}
 	a.navbutton {text-decoration:none;}
 

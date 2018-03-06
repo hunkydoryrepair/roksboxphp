@@ -219,9 +219,6 @@
 		}
 	}
 	
-	function filepathencode($path) {
-		return str_replace('#','%23',str_replace(" ","%20",str_replace("'","%27",str_replace("?","%3f",str_replace(":","%3a",$path)))));
-	}
 	
 	//
 	// find a TV show or MOVIE id given the playlist entry. We
@@ -334,17 +331,6 @@
 
 	}
 	
-	function sendFileContents($filepath, $originalname) {
-		global $USE_XSENDFILE;
-		if ($USE_XSENDFILE) {
-			header("X-Sendfile: " . $filepath);
-			header("Content-type: application/octet-stream");
-			header('Content-Disposition: attachment; filename="' . basename($originalname) . '"');		
-		} else {
-			$path = fs2httppath($filepath);
-			header("Location: http://" . $_SERVER['SERVER_NAME'] . filepathencode($path) );
-		}
-	}
 	
 	
 	//
@@ -522,7 +508,7 @@
 					} else {
 						header("HTTP/1.1 404 Not Found");
 						header("Status: 404 Not Found");
-						print( "Not Found: Movie information found but no file on file system.");
+						print( "Not Found: Movie information found but not file on file system. {$path}");
 					}
 				}
 			} else   {
