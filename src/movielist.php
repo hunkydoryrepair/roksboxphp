@@ -28,7 +28,7 @@
 	// In particular, for years, genres, actors, etc.
 	//
 	function generateTextThumbnail( $text, $filepath ) {
-		global $THUMBNAIL_FONT;
+		global $THUMBNAIL_FONT, $THUMBNAIL_BGCOLOR, $THUMBNAIL_TEXTCOLOR;
 		$font = $THUMBNAIL_FONT;
 		$width = 256;
 		$height = 306;
@@ -39,7 +39,7 @@
 		imagefilledrectangle($image, 0,0, $width-1, $height-1, $gray );
 		
 		imagesetthickness( $image, 4 );
-		$blue = imagecolorallocate( $image, $THUMBNAIL_TEXTCOLOR );
+		$blue = hexColorAllocate( $image, $THUMBNAIL_TEXTCOLOR );
 		
 		// draw a border
 		imagerectangle($image, 1,1, $width-2, $height-2, $blue );
@@ -47,14 +47,18 @@
 		$degree = 0;
 		if (strlen($text) > 8) $degree = -45;
 		if (file_exists( $font )) {
-			$size = 40;
+			$size = 200;
 			$text_width = $width;
-			while ( $size > 1 && $text_width > $width - 8) {
+			$text_height = $height;
+			while ( $size > 1 && ($text_width > $width - 8 || $text_height > $height-8 )) {
 				$size = $size - 1;
 				$r = imagettfbbox($size, $degree, $font, $text );
-				$text_width = $r[2] - $r[0];
+				$text_width = $r[4] - $r[0];
+				$text_height = $r[3] - $r[7];
 			}
-			imagettftext($image, $size, $degree, $font, $text);
+			$x = ($width - $text_width)/2 - 4;
+			$y = ($height - $r[5])/2;
+			imagettftext($image, $size, $degree, $x, $y, $blue, $font, $text);
 		}
 		else {
 			// use built in.
@@ -200,15 +204,15 @@
 				$path = filepathencode($row['c12'] . "." . $row['c13'] . ")%20" . $name );
 				// include a jpg
 				if ($ROKSBOX_MODE) {
-					print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($row['c12'] . "." . $row['c13'] . ") " . $name) . "</A></TD></TR>\n");
-					print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
-					print("<TR><TD><A HREF=\"" . $path . ".xml\"> </A></TD></TR>\n");
+					print("<tr><td><a HREF=\"" . $path . ".m4v\">" . htmlspecialchars($row['c12'] . "." . $row['c13'] . ") " . $name) . "</a></td></tr>\n");
+					print("<tr><td><a HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></a></td></tr>\n");
+					print("<tr><td><a HREF=\"" . $path . ".xml\"> </a></td></tr>\n");
 				} else {
-					print("<TR><TD COLSPAN=2><HR/></TD></TR>\n");
-					print("<TR><TD valign=\"top\"><A HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></A></TD>\n");
+					print("<tr><TD COLSPAN=2><HR/></td></tr>\n");
+					print("<tr><TD valign=\"top\"><a HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></a></td>\n");
 					print("<TD valign=\"top\"><span class=\"movietitle\">" . htmlspecialchars($row['c12'] . "." . $row['c13'] . ") " . $name) . "</span>");
 					print("<P class=\"description\">" . htmlspecialchars($row['c01']) . "</P>\r");
-					print("<A class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</A></TD></TR>\n");
+					print("<a class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</a></td></tr>\n");
 				}
 			}
 		}
@@ -226,15 +230,15 @@
 //				$name = utf8_decode($row['c00']);
 				$name = $row['c00'];
 				$path = filepathencode(str_replace('/','_',$name) . " (" . $row['c07'] . ")");
-				// include a jpg. We MUST put at least a space between the <A></A> tags (another tag won't do it), or Roksbox
+				// include a jpg. We MUST put at least a space between the <A></a> tags (another tag won't do it), or Roksbox
 				// will not display it.
 				if ($ROKSBOX_MODE) {
-					print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($name) . "</A></TD></TR>\n");
-					print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
-					print("<TR><TD><A HREF=\"" . $path . ".xml\"> <img border=0 src=\"" . $path . ".xml\"/></A></TD></TR>\n");
+					print("<tr><td><a HREF=\"" . $path . ".m4v\">" . htmlspecialchars($name) . "</a></td></tr>\n");
+					print("<tr><td><a HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></a></td></tr>\n");
+					print("<tr><td><a HREF=\"" . $path . ".xml\"> </a></td></tr>\n");
 				} else {
-					print("<TR><TD COLSPAN=2><HR/></TD></TR>\n");
-					print("<TR><TD><A HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></A></TD>\n");
+					print("<tr><TD COLSPAN=2><HR/></td></tr>\n");
+					print("<tr><td><a HREF=\"" . $path . ".m4v\"><img  class=\"thumbnail\" src=\"" . $path . ".jpg\"/></a></td>\n");
 					print("<TD valign=\"top\"><span class=\"movietitle\">" . htmlspecialchars($name)  . "</span><P class=\"description\">" . htmlspecialchars($row['c01']) . "</P>\r");
 					print("<span class=\"director\">Director: " . htmlspecialchars($row['c15']) . "</span>\r");
 					$time = $row['c11'] + 0;
@@ -243,7 +247,7 @@
 					else
 						$strtime = $time . "m";
 					print("<span class=\"runtime\">Run Time: " . $strtime . "</span>\r");
-					print("<span class=\"playlink\"><A class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</A></span></TD></TR>\n");
+					print("<span class=\"playlink\"><a class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</a></span></td></tr>\n");
 				}
 			}
 		}
@@ -346,7 +350,7 @@
 			$title = $params[sizeof($params)-1]; // last parameter, no trailing slash
 			$title = substr($title, 0, strlen($title)-4); // trim off extension
 			$title = str_replace("_","/",$title);
-			if (preg_match('/ \([0-9]+\)$/', $title) != 0 ) {
+			if (preg_match('/ \([0-9]*\)$/', $title) != 0 ) {
 				$idx = strrpos($title,' (');
 				$year = substr($title,$idx+2,strlen($title)-$idx-3);
 				$title = substr($title,0,$idx);
@@ -579,17 +583,17 @@
 	
 	if (empty($cmd)) {
 		print("<table>");
-		print("<TR><TD></TD><TD><A HREF=\"Genre/\">Genres</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Television/\">Television</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"New/\">New</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Playlists/\">Playlists</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Search/\">Search</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Actors/\">Actors</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Directors/\">Directors</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"XTRAS/\">XTRAS</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Year/\">Year</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"List/\">List</A></TD></TR>\n");
-		print("<TR><TD></TD><TD><A HREF=\"Files/\">Files</A></TD></TR>\n");
+		print("<tr><td></td><td><a HREF=\"Genre/\">Genres</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Television/\">Television</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"New/\">New</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Playlists/\">Playlists</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Search/\">Search</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Actors/\">Actors</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Directors/\">Directors</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"XTRAS/\">XTRAS</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Year/\">Year</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"List/\">List</a></td></tr>\n");
+		print("<tr><td></td><td><a HREF=\"Files/\">Files</a></td></tr>\n");
 		print("</table>");
 	}
 	else if (strcasecmp($cmd,"LIST")==0) {
@@ -602,17 +606,17 @@
 			$result = $db->query('select distinct genre.strGenre from genrelinkmovie left join genre on genrelinkmovie.idGenre=genre.idGenre order by genre.strGenre');
 			if ($ROKSBOX_MODE) {
 				print("<table>");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 			} 
 			while ($row = $result->fetchArray()) {
 				$genre = $row['strGenre'];
 				$haskey = array_key_exists($genre,$GENRE_FILTER);
 				if ( ($haskey && $GENRE_FILTER[$genre]) || (!$haskey && $GENRE_FILTER['default']) ) {
 					if ($ROKSBOX_MODE) {
-						print("<TR><TD><A HREF=\"" . filepathencode($genre) . "/\">" . htmlspecialchars($genre) . "</A></TD></TR>");
-						print("<TR><TD><A HREF=\"" . filepathencode($genre) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode($genre) . ".jpg\"/></A></TD></TR>");
+						print("<tr><td><a HREF=\"" . filepathencode($genre) . "/\">" . htmlspecialchars($genre) . "</a></td></tr>");
+						print("<tr><td><a HREF=\"" . filepathencode($genre) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode($genre) . ".jpg\"/></a></td></tr>");
 					} else {
-						print("<a HREF=\"" . filepathencode($genre) . "/\"><img class=\"thumbnail\" border=0 src=\"" . filepathencode($genre) . ".jpg\"/></A>");
+						print("<a HREF=\"" . filepathencode($genre) . "/\"><img class=\"thumbnail\" border=0 src=\"" . filepathencode($genre) . ".jpg\"/></a>");
 					}
 				}
 			}      
@@ -632,7 +636,7 @@
 			$result = $db->query('select actors.strActor, count(*) as cnt from movie join actorlinkmovie on actorlinkmovie.idMovie=movie.idMovie join actors on actorlinkmovie.idActor=actors.idActor group by actors.strActor order by actors.strActor');
 			if ($ROKSBOX_MODE) {
 				print("<table>");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 			} 
 			while ($row = $result->fetchArray()) {
 				$actor = $row['strActor'];
@@ -642,12 +646,12 @@
 					$show = $row['cnt'] >= $ACTOR_MOVIE_COUNT;
 				if ( $show ) {
 					if ($ROKSBOX_MODE) {
-						print("<TR><TD><A HREF=\"" . filepathencode($actor) . "/\">" . htmlspecialchars($actor) . " (" . $row['cnt'] . ")</A></TD></TR>");
-						print("<TR><TD><A HREF=\"" . filepathencode($actor) . ".jpg\"> <img border=0 src=\"" .  filepathencode($actor) . ".jpg\"/></A></TD></TR>");
+						print("<tr><td><a HREF=\"" . filepathencode($actor) . "/\">" . htmlspecialchars($actor) . " (" . $row['cnt'] . ")</a></td></tr>");
+						print("<tr><td><a HREF=\"" . filepathencode($actor) . ".jpg\"> <img border=0 src=\"" .  filepathencode($actor) . ".jpg\"/></a></td></tr>");
 					} else {
 						print("<div class=\"thumbblock\">");
-						print("<A HREF=\"" . filepathencode($actor) . "/\"><img class=\"thumbnail\" border=0 src=\"" .  filepathencode($actor) . ".jpg\"/></A><BR/>");
-						print("<A HREF=\"" . filepathencode($actor) . "/\">" . htmlspecialchars($actor) . " (" . $row['cnt'] . ")</A><BR/>");
+						print("<a HREF=\"" . filepathencode($actor) . "/\"><img class=\"thumbnail\" border=0 src=\"" .  filepathencode($actor) . ".jpg\"/></a><BR/>");
+						print("<a HREF=\"" . filepathencode($actor) . "/\">" . htmlspecialchars($actor) . " (" . $row['cnt'] . ")</a><BR/>");
 						print("</div>");
 					}
 				}
@@ -668,19 +672,19 @@
 			$result = $db->query('select * from (select c15, count(*) as cnt from movie group by c15) where cnt >= 4  order by cnt desc');
 			if ($ROKSBOX_MODE) {
 				print("<table>");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 			} 
 			while ($row = $result->fetchArray()) {
 				$director = $row['c15'];
 				$directorfile = filepathencode(str_replace('/',';',$director));  // because of the /, don't just use filepathencode
 				
 				if ($ROKSBOX_MODE) {
-					print("<TR><TD><A HREF=\"" . $directorfile . "/\">" . htmlspecialchars($director) . " (" . $row['cnt'] . ")</A></TD></TR>");
-					print("<TR><TD><A HREF=\"" . $directorfile . ".jpg\"> <img border=0 src=\"" .  $directorfile . ".jpg\"/></A></TD></TR>");
+					print("<tr><td><a HREF=\"" . $directorfile . "/\">" . htmlspecialchars($director) . " (" . $row['cnt'] . ")</a></td></tr>");
+					print("<tr><td><a HREF=\"" . $directorfile . ".jpg\"> <img border=0 src=\"" .  $directorfile . ".jpg\"/></a></td></tr>");
 				} else {
 					print("<div class=\"thumbblock\">");
-					print("<A HREF=\"" . $directorfile . "/\"><img class=\"thumbnail\" border=0 src=\"" .  $directorfile . ".jpg\"/></A><BR/>");
-					print("<A HREF=\"" . $directorfile . "/\">" . htmlspecialchars($director) . " (" . $row['cnt'] . ")</A><BR/>");
+					print("<a HREF=\"" . $directorfile . "/\"><img class=\"thumbnail\" border=0 src=\"" .  $directorfile . ".jpg\"/></a><BR/>");
+					print("<a HREF=\"" . $directorfile . "/\">" . htmlspecialchars($director) . " (" . $row['cnt'] . ")</a><BR/>");
 					print("</div>");
 				}
 			}      
@@ -701,14 +705,17 @@
 			$result = $db->query('select distinct c07 from movie order by c07 desc');
 			if ($ROKSBOX_MODE) {
 				print("<table>");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 			}
 			while ($row = $result->fetchArray()) {
-				if ($ROKSBOX_MODE) {
-					print("<TR><TD><A HREF=\"" . $row['c07'] . "/\">" . htmlspecialchars($row['c07']) . "</A></TD></TR>");
-					print("<TR><TD><A HREF=\"" . $row['c07'] . ".jpg\"> <img border=0 src=\"" .  $row['c07'] . ".jpg\"/></A></TD></TR>");
-				} else {
-					print("<A HREF=\"" . $row['c07'] . "/\"> <img class=\"thumbnail\" border=0 src=\"" .  $row['c07'] . ".jpg\"/></A>");
+				$year = $row['c07'];
+				if (!empty($year)) {
+					if ($ROKSBOX_MODE) {
+						print("<tr><td><a HREF=\"" . $year . "/\">" . htmlspecialchars($year) . "</a></td></tr>");
+						print("<tr><td><a HREF=\"" . $year . ".jpg\"> <img border=0 src=\"" .  $year . ".jpg\"/></a></td></tr>");
+					} else {
+						print("<a HREF=\"" . $year . "/\"> <img class=\"thumbnail\" border=0 src=\"" .  $year . ".jpg\"/></a>");
+					}
 				}
 			}      
 			if ($ROKSBOX_MODE) print("</table>");
@@ -744,7 +751,7 @@
 			foreach( range('A','Z') as $letter) {
 				$cnt = $db->querySingle('SELECT count(c00) FROM movie WHERE c00 like "%' . SQLite3::escapeString($search . $letter) . '%"');
 				if ($cnt > 0) {
-					print("<TR><TD><A HREF=\"" . $search . $letter . "/\">" . $search . $letter . "</A></TD></TR>\n");
+					print("<tr><td><a HREF=\"" . $search . $letter . "/\">" . $search . $letter . "</a></td></tr>\n");
 					if ($ROKSBOX_MODE) {
 						// provide a thumbnail for the letter
 						print("<tr><td><a href=\"" . $search . $letter . ".jpg\">" . $search . $letter . ".jpg</a></td></tr>\n");
@@ -774,20 +781,20 @@
 			$files = scandir(dirname(__FILE__));
 			if ($ROKSBOX_MODE) {
 				print("<table>\n");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n") ;
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n") ;
 			}
 			foreach( $files as $file ) {
 				if (preg_match('/\.m3u$/',$file)) {
 					$name = substr($file,0,strlen($file)-4);
 					$namepath = filepathencode($name);
 					if ($ROKSBOX_MODE) {
-						print("<TR><TD><A href=\"" . $namepath . "/\">" . htmlspecialchars($name) . "</A></TD></TR>\n");
-						print("<TR><TD><A href=\"" . $namepath . ".jpg\"> <img border=0 src=\"" . $namepath . ".jpg\"/></A></TD></TR>\n");
+						print("<tr><td><a href=\"" . $namepath . "/\">" . htmlspecialchars($name) . "</a></td></tr>\n");
+						print("<tr><td><a href=\"" . $namepath . ".jpg\"> <img border=0 src=\"" . $namepath . ".jpg\"/></a></td></tr>\n");
 					} else {
 						print("<div class=\"thumbblock\" >");
 
-						print("<A href=\"" . $namepath . "/\"> <img class=\"thumbnail\" border=0 src=\"" . $namepath . ".jpg\"/></A><BR/>\n");
-						print("<A href=\"" . $namepath . "/\">" . htmlspecialchars($name) . "</A></div>\n");
+						print("<a href=\"" . $namepath . "/\"> <img class=\"thumbnail\" border=0 src=\"" . $namepath . ".jpg\"/></a><BR/>\n");
+						print("<a href=\"" . $namepath . "/\">" . htmlspecialchars($name) . "</a></div>\n");
 						
 					}
 				}
@@ -799,7 +806,7 @@
 			$list .= ".m3u";
 			if ($ROKSBOX_MODE) {
 				print("<table>\n");
-				print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n") ;
+				print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n") ;
 			}
 			if ($fp = fopen( dirname(__FILE__) . "/" . $list, 'r' )) {
 				while( $str = fgets($fp) ) {
@@ -811,18 +818,18 @@
 						$filename = fgets($fp);  // filename follows immediately
 						$filename = basename($filename);
 						$path = filepathencode($title);
-						// include a jpg. We MUST put at least a space between the <A></A> tags (another tag won't do it), or Roksbox
+						// include a jpg. We MUST put at least a space between the <A></a> tags (another tag won't do it), or Roksbox
 						// will not view it.
 						if ($ROKSBOX_MODE) {
-							print("<TR><TD><A HREF=\"" . $path . ".m4v\">" . htmlspecialchars($title) . "</A></TD></TR>\n");
-							print("<TR><TD><A HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></A></TD></TR>\n");
-							print("<TR><TD><A HREF=\"" . $path . ".xml\"> </A></TD></TR>\n");
+							print("<tr><td><a HREF=\"" . $path . ".m4v\">" . htmlspecialchars($title) . "</a></td></tr>\n");
+							print("<tr><td><a HREF=\"" . $path . ".jpg\"> <img border=0 src=\"" . $path . ".jpg\"/></a></td></tr>\n");
+							print("<tr><td><a HREF=\"" . $path . ".xml\"> </a></td></tr>\n");
 						} else {
 							print("<div style=\"clear:both\"><HR/></div>\n");
 
-							print("<div style=\"float:left\"><A HREF=\"" . $path . ".m4v\"><img class=\"thumbnail\" border=0 src=\"" . $path . ".jpg\"/></A></div>\n");
+							print("<div style=\"float:left\"><a HREF=\"" . $path . ".m4v\"><img class=\"thumbnail\" border=0 src=\"" . $path . ".jpg\"/></a></div>\n");
 							print("<div style=\"float:left; padding-left:10px\"><span class=\"movietitle\">" . htmlspecialchars($title) . "</span>\n");
-							print("<P></P><A class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</A></div>\n");
+							print("<P></P><a class=\"playlink\" HREF=\"" . $path . ".m4v\">PLAY</a></div>\n");
 						}
 					}
 				}
@@ -840,17 +847,17 @@
 		if (empty($show)) {
 			$shows = $db->query('select * from tvshow order by ShiftedThe(c00)');
 			print("<table>\n");
-			if ($ROKSBOX_MODE) print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n") ;
+			if ($ROKSBOX_MODE) print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n") ;
 			while( $row = $shows->fetchArray() ) {
 				if ($ROKSBOX_MODE) {
-					print("<TR><TD><A href=\"" . filepathencode($row['c00']) . "/\">" . htmlspecialchars($row['c00']) . "</A></TD></TR>\n");
-					print("<TR><TD><A href=\"" . filepathencode($row['c00']) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode($row['c00']) . ".jpg\"></A></TD></TR>\n");
+					print("<tr><td><a href=\"" . filepathencode($row['c00']) . "/\">" . htmlspecialchars($row['c00']) . "</a></td></tr>\n");
+					print("<tr><td><a href=\"" . filepathencode($row['c00']) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode($row['c00']) . ".jpg\"></a></td></tr>\n");
 				} else {
-					print("<TR><TD COLSPAN=2><HR></TD></TR>\n");
-					print("<TR><TD valign=\"top\"><A href=\"" . filepathencode($row['c00']) . "/\"> <IMG class=\"thumbnail\" BORDER=0 SRC=\"" . filepathencode($row['c00']) . ".jpg\"></A></TD>\n");
+					print("<tr><TD COLSPAN=2><HR></td></tr>\n");
+					print("<tr><TD valign=\"top\"><a href=\"" . filepathencode($row['c00']) . "/\"> <IMG class=\"thumbnail\" BORDER=0 SRC=\"" . filepathencode($row['c00']) . ".jpg\"></a></td>\n");
 					print("<TD valign=\"top\"><span class=\"movietitle\">" . htmlspecialchars($row['c00']) . "</span><P class=\"description\">" . htmlspecialchars($row['c01']) .  "</P>");
 					
-					print("<A class=\"selectlink\" href=\"" . filepathencode($row['c00']) . "/\"> SELECT </A></TD></TR>\n");
+					print("<a class=\"selectlink\" href=\"" . filepathencode($row['c00']) . "/\"> SELECT </a></td></tr>\n");
 				}
 			}
 			print("</TABLE>");
@@ -874,16 +881,16 @@
 				if ($i != 1) {
 					if ($ROKSBOX_MODE)  {
 						print("<table>\n");
-						print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n") ;
+						print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n") ;
 					}
 					while( $row = $seasons->fetchArray() ) {
 						if ($ROKSBOX_MODE) {
-							print("<TR><TD><A href=\"" . filepathencode("Season " . $row['c12']) . "/\">" . htmlspecialchars("Season " . $row['c12']) . "</A></TD></TR>\n");
-							print("<TR><TD><A href=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"/></A></TD></TR>\n");
+							print("<tr><td><a href=\"" . filepathencode("Season " . $row['c12']) . "/\">" . htmlspecialchars("Season " . $row['c12']) . "</a></td></tr>\n");
+							print("<tr><td><a href=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"/></a></td></tr>\n");
 						} else {
 							print("<div class=\"thumbblock\">\n");
-							print("<A href=\"" . filepathencode("Season " . $row['c12']) . "/\"> <IMG class=\"thumbnail\" BORDER=0 SRC=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"/></A><BR/>\n");
-							print("<A href=\"" . filepathencode("Season " . $row['c12']) . "/\">" . htmlspecialchars("Season " . $row['c12']) . "</A>\n");
+							print("<a href=\"" . filepathencode("Season " . $row['c12']) . "/\"> <IMG class=\"thumbnail\" BORDER=0 SRC=\"" . filepathencode("Season " . $row['c12']) . ".jpg\"/></a><BR/>\n");
+							print("<a href=\"" . filepathencode("Season " . $row['c12']) . "/\">" . htmlspecialchars("Season " . $row['c12']) . "</a>\n");
 							print("</div>");
 						}
 					}
@@ -911,20 +918,20 @@
 	
 	if (!empty($movies)) {
 		print("<table>");
-		if ($ROKSBOX_MODE) print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+		if ($ROKSBOX_MODE) print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 		printMovies($movies);
 		if ($addmorelink) {
-			print("<TR><TD><A class=\"selectlink\" href=\"MORE/\">MORE</A></TD></TR>\n");
+			print("<tr><td><a class=\"selectlink\" href=\"MORE/\">MORE</a></td></tr>\n");
 		}
 		print("</table>");
 	}
 
 	if (!empty($episodes)) {
 		print("<table>");
-		if ($ROKSBOX_MODE) print("<TR><TD><A class=\"selectlink\" href=\"..\">BACK</A></TD></TR>\n");
+		if ($ROKSBOX_MODE) print("<tr><td><a class=\"selectlink\" href=\"..\">BACK</a></td></tr>\n");
 		printEpisodes($episodes);
 		if ($addmorelink) {
-			print("<TR><TD><A class=\"selectlink\" href=\"MORE/\">MORE</A></TD></TR>\n");
+			print("<tr><td><a class=\"selectlink\" href=\"MORE/\">MORE</a></td></tr>\n");
 		}
 		print("</table>");
 	}

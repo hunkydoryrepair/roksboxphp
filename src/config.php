@@ -12,7 +12,7 @@
 	// set to a font available on the system with GD Library to be used
 	// for rendering text thumbnails.
 	$THUMBNAIL_FONT = "/media/usb/webroot/media/Mizo Arial.ttf";
-	$THUMBNAIL_BGCOLOR = "FFFF33";
+	$THUMBNAIL_BGCOLOR = "FFFFFF";
 	$THUMBNAIL_TEXTCOLOR = "000033";
 	
 	// if $USE_XSENDFILE is true, mod_xsendfile must be configured on
