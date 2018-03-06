@@ -444,7 +444,7 @@
 	else if (!empty($_REQUEST['localdbid'])) {
 		$localdbid = urldecode($_REQUEST['localdbid']);
 
-		$db = new MyDB();
+		$db = new RoksDB();
 		$movieinfo = gatherShowInfoFromLocal($db, $localdbid);
 
 		// put form to the right, episodes to the left
