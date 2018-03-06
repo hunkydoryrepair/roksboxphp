@@ -77,7 +77,7 @@
                 for( $i=0; $i<$cnt; $i++ ) {
                     $pername = $actorimages[$i]["actor"]["name"];
                     print $pername . "<br/>";
-					if (isset($actorimages[$i]["profiles"]) {
+					if (isset($actorimages[$i]["profiles"])) {
 						$perimgs = $actorimages[$i]["profiles"];
 						//var_dump($perimgs);
 						print "<table><TR>";
