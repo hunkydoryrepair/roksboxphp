@@ -2,6 +2,7 @@
 
 	require("config.php");
 	require("movielist-tools/RoksDB.php");
+	require("movielist-tools/common.php");
 	
 	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false;
 	$GOOGLETV     =  stripos($_SERVER['HTTP_USER_AGENT'],'GoogleTV') !== false;
@@ -13,18 +14,6 @@
 	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 	
 	
-	function fs2httppath( $path ) {
-		global $MOVIE_FS_FILES_BASE;
-		global $MOVIE_HTTP_FILES_BASE;
-		if (stripos($path, $MOVIE_FS_FILES_BASE) === 0) {
-			return $MOVIE_HTTP_FILES_BASE . substr($path, strlen($MOVIE_FS_FILES_BASE));
-		} else {
-			// return untouched.
-			return $path;
-		}
-		
-	}
-
 	
 	//
 	// generate a new JPEG as a placeholder for a missing graphic.
@@ -551,7 +540,7 @@
 	print('<html>\n<head>\n<title>Movie List</title>\n');
 	print('<link rel="stylesheet" href="{$basepath}moviestyles.css">');
 	
-	print("</head>\n<body>\n");
+	print("</head>\n<body class='movielist'>\n");
 	
 	if ($ROKSBOX_MODE) {
 		print("<h1>Index of " . $_SERVER['PHP_SELF'] . "</h1>\n");

@@ -1,27 +1,11 @@
 <?php 
 
 	require("../config.php");
+	require("common.php");
 	require("RoksDB.php");
 
 	$API_KEY = '835727baa2a8325eab45362f7fed6f98';
 	
-	
-	function fs2httppath( $path ) {
-		global $MOVIE_FS_FILES_BASE;
-		global $MOVIE_HTTP_FILES_BASE;
-		if (stripos($path, $MOVIE_FS_FILES_BASE) === 0) {
-			return $MOVIE_HTTP_FILES_BASE . substr($path, strlen($MOVIE_FS_FILES_BASE));
-		} else {
-			// return untouched.
-			return $path;
-		}
-		
-	}
-	
-	function filepathencode($path) {
-		return str_replace('#','%23',str_replace(" ","%20",str_replace("'","%27",str_replace("?","%3f",str_replace(":","%3a",$path)))));
-	}	
-
 
 
 	function getAPI3Result($request,$params = NULL)

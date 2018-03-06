@@ -1,4 +1,7 @@
 <?php 
+	//
+	// This is unrelated to movielist. Intended as a game for naming actors.
+	//
 
 	$API_KEY = '835727baa2a8325eab45362f7fed6f98';
 	
