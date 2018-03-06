@@ -50,7 +50,7 @@
 <h1>Upload New Videos</h1>
 <a class='navbutton' HREF="moviemanager.php">MANAGER</a>&nbsp;
 </div>
-	
+	<div class="body row">
 		<form action="" method="post" enctype="multipart/form-data">
 			<input type="file" name="file" multiple="multiple"/>
 			<input type="submit" />
@@ -73,5 +73,6 @@
 			<ul>
 			</ul>
 		</div>
+	</div>
 	</body>
 </html>
