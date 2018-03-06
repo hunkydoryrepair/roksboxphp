@@ -318,7 +318,7 @@
 			if (count($params) < 4) return NULL;
 			$list = $params[2];
 			$title = $params[3];
-			$title = substr($title, 0, strlen($title)-4); // trim off extension
+			$title = removeExtension($title);
 			return findIDFromPlaylist( $db, $list, $title );
 		}
 		else if (strcasecmp($cmd,"TELEVISION")===0) {
@@ -341,14 +341,14 @@
 				if (preg_match('/^Season [0-9]+/',$title) !== 0)
 					$title = $show; // if we have SEASON list, grab the name of show
 				else
-					$title = substr($title, 0, strlen($title)-4); // trim off extension
+					$title = removeExtension($title); // trim off extension
 				$select = 'SELECT * from tvshowlinkpath JOIN tvshow on tvshowlinkpath.idShow=tvshow.idShow JOIN path ON tvshowlinkpath.idPath=path.idPath WHERE c00=\'' .
 					SQLite3::escapeString($title) . '\'';
 				return $db->querySingle($select, true);
 			}
 		} else {
 			$title = $params[sizeof($params)-1]; // last parameter, no trailing slash
-			$title = substr($title, 0, strlen($title)-4); // trim off extension
+			$title = removeExtension($title); // trim off extension
 			$title = str_replace("_","/",$title);
 			if (preg_match('/ \([0-9]*\)$/', $title) != 0 ) {
 				$idx = strrpos($title,' (');
@@ -397,8 +397,9 @@
 	
 	$lastparam = $params[sizeof($params)-1];
 	
-	// redirect if last parameter doesn't have slash or extension of exactly 3 characters
-	if (!empty($lastparam) && strrpos($lastparam,'.') !== strlen($lastparam)-4 ) {
+	// redirect if last parameter doesn't have slash or extension of exactly 3 or 4 characters
+	if (!empty($lastparam) && strrpos($lastparam,'.') !== strlen($lastparam)-4 && strrpos($lastparam,'.') !== strlen($lastparam)-3 ) {
+		// redirect to append a /, which we need to properly understand our parameters.
 		header("HTTP/1.1 301 Moved Permanently");
 		header("Location: http://" . $_SERVER['SERVER_NAME'] . $_SERVER['PHP_SELF'] . "/");
 		exit();
@@ -422,7 +423,7 @@
 			
 			if (!$movie) {
 				if (preg_match('/\.jpg$/', $lastparam) != 0 ) {
-					$filename = substr($lastparam,0,strlen($lastparam)-4);  // strip off extension
+					$filename = removeExtension($lastparam);  // strip off extension
 					$path = $MOVIE_FS_FILES_BASE . rawurldecode($filename) . ".jpg"; // look in base of movie files and in images/
 					if (file_exists( $path )) {
 						sendFileContents($path,$lastparam);
@@ -533,10 +534,7 @@
 						$path = substr($path,0,strlen($path)-1); // strip off trailing slash
 					}
 				} else {
-					$file = $movie['strFileName'];
-					$idx = strrpos($file,".");
-					// remove extension
-					if ($idx) $file = substr($file, 0, $idx);
+					$file = removeExtension($movie['strFileName']);
 					$path = $movie['strPath'] . $file;
 				}
 				if (file_exists( $path . ".tbn" )) {

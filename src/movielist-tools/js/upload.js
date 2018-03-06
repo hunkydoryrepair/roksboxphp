@@ -10,8 +10,6 @@
 	}
 	
 	var form;
-	var starttime=0;
-	var sizeuploaded=0;
 	
 	if(support())
 	{
@@ -19,6 +17,8 @@
 		var BYTES_PER_CHUNK = 1024 * 1024 * 1;
 		
 		var _files_data = [];
+		var starttime=0;
+		var sizeuploaded=0;
 	
 		window.onload = function()
 		{
@@ -76,6 +76,7 @@
 									};
 									_files_data[i] = tmp;
 									
+									// put in toupload group
 									ul.appendChild(lis[j]);
 									found = true;
 								}
@@ -107,6 +108,7 @@
 	
 							li.appendChild(span);
 							li.appendChild(div);
+							// put in to upload group.
 							ul.appendChild(li);	
 						}
 					}
@@ -123,6 +125,7 @@
 		function sendRequest(input)
 		{
 			starttime = new Date().getTime();
+			sizeuploaded = 0;
 			var blobs = input.files;
 			async(blobs, 0, blobs.length);
 		}
@@ -149,6 +152,9 @@
 					start = blobs[i].size;	
 			}
 	
+			//
+			// call uploadFile for each file object
+			//
 			uploadFile(blobs[i], index, start, _files_data[i]['data-end'], function()
 			{
 				i++;
@@ -185,9 +191,8 @@
 		 * Performs actual upload, adjust progress bars
 		 *
 		 * @param blob
-		 * @param index
-		 * @param start
-		 * @param end
+		 * @param state  {index:  chunk number, start: byte offset, total: total number of slices}
+
 		 */
 		function uploadFile(blob, index, start, slicesTotal, callback)
 		{	
@@ -236,16 +241,21 @@
 								sizeuploaded += end-start;
 								
 								// calculate average upload speed
-								var mseconds = (new Date().getTime()) - starttime;
-								if (mseconds > 0) {
+								var now = (new Date().getTime());
+								var mseconds = now - starttime;
+								if (mseconds > 5000) {
 									var rate = sizeuploaded / mseconds; // byte per msecond == KB/s
 									rate = rate * 8; // Kb/s
 									var speed = document.getElementById('uploadspeed');								
 									var units = " Kb/s";
-									if (rate > 5000000) { rate /= 1000; units = " Mb/s"; }
+									if (rate > 5000) { rate /= 1000; units = " Mb/s"; }
 									if (rate < 10) rate = rate.toFixed(1);
 									else rate = rate.toFixed(0);
 									speed.innerHTML = rate + units;
+									// restart next sample
+									starttime = now;
+									sizeuploaded = 0;
+
 								}
 								
 								

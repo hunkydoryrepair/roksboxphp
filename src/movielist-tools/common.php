@@ -30,3 +30,13 @@
 		return str_replace('#','%23',str_replace(" ","%20",str_replace("'","%27",str_replace("?","%3f",str_replace(":","%3a",$path)))));
 	}	
 
+
+	function removeExtension($path) {
+		$slash = strrpos($path, '/');
+		$dot = strrpos($path, '.');
+		// even if one or both of these is false, the comparison works.
+		if ($dot > $slash) {
+			return substr($path,0,$dot);
+		}
+		return $path;
+	}
