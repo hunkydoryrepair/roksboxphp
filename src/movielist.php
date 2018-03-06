@@ -1,84 +1,11 @@
 <?php 
 
-	// for file paths in the DB that use the file system location, we replace
-	// the MOVIE_FS_FILES_BASE with MOVIE_HTTP_FILES_BASE
-	$MOVIE_HTTP_FILES_BASE = "/movies/";
-	$MOVIE_FS_FILES_BASE = "/media/usb/webroot/movies/";
-	// specify where the database location is. If it is relative to the .php file,
-	// set $MOVIE_DB_LOCATION_IS_RELATIVE to true
-	$MOVIE_DB_LOCATION = "/../db/Movies.db";
-	$MOVIE_DB_LOCATION_IS_RELATIVE = true;
-	$USE_XSENDFILE = false;
-	// GENREs can be redundant (like SUSPENSE and THRILLER, or SPORT and SPORTS FILM). 
-	// This array contains GENRE to show or not show. 
-	$GENRE_FILTER = array ("default" => true,
-	                 "Suspense" => false,
-					"Thriller"=>true,
-					"Comedy"=>true,
-					"Crime"=>true,
-					 "Sport"=>false,
-					"Road Movie"=>false,
-					"Neo-noir"=>false,
-					"Mystery"=>false,
-					"Music"=>false,
-					"History"=>false,
-					"Erotic"=>false);
-	// GENREs can be redundant (like SUSPENSE and THRILLER, or SPORT and SPORTS FILM). 
-	// This array contains GENRE to show or not show. 
-	$ACTOR_MOVIE_COUNT = 7;  // 4 or more movies and we include actor. Override below
-	$ACTOR_FILTER = array ("Jim Carrey" => true,
-						   "Adam Sandler"=>true,
-						   "Allen Covert"=>false,
-						   "Harrison Ford"=>false,
-						   "Alan Rickman"=>false,
-						   "Kenny Baker"=>false,
-						   "Frank Oz"=>false,
-						   "Tom Felton"=>false,
-						   "Julie Walters"=>false,
-						   "Michael Gambon"=>false,
-						   "Rupert Grint"=>false,
-						   "Emma Watson"=>false,
-						   "Carrie Fisher"=>false,
-						   "Robbie Coltrane"=>false,
-						   "Matthew Lewis"=>false,
-						   "Steve Buscemi"=>false,
-						   "Anthony Daniels"=>false);
-	
+	require("config.php");
+	require("movielist-tools/RoksDB.php");
 	
 	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false;
 	$GOOGLETV     =  stripos($_SERVER['HTTP_USER_AGENT'],'GoogleTV') !== false;
-	
-	
-	
-	
-	function ShiftedThe($string) {
-		$res = strtoupper($string);
-		if (strcasecmp(substr($res,0,4),"THE ")==0) {
-			$res = substr($res,4);
-		}
-		$res = str_replace(',','',str_replace('\'','',str_replace(':','',str_replace('.','',str_replace('-','',$res)))));
-		
-		return $res;
-	}		
-	
-	class MyDB extends SQLite3
-	{
-	
-		
-		function __construct()
-		{
-			global $MOVIE_DB_LOCATION_IS_RELATIVE;
-			global $MOVIE_DB_LOCATION;
-			if ($MOVIE_DB_LOCATION_IS_RELATIVE) {
-				$dbFile = __DIR__ . $MOVIE_DB_LOCATION;
-			} else {
-				$dbFile = $MOVIE_DB_LOCATION;
-			}
-				
-			$this->open($dbFile, SQLITE3_OPEN_READONLY);
-			$this->createFunction('ShiftedThe','ShiftedThe');
-		}
-	}
+
 	
 	function fs2httppath( $path ) {
 		global $MOVIE_FS_FILES_BASE;
@@ -98,7 +25,8 @@
 	// In particular, for years, genres, actors, etc.
 	//
 	function generateTextThumbnail( $text, $filepath ) {
-		$font = "arial.ttf";
+		global $THUMBNAIL_FONT;
+		$font = $THUMBNAIL_FONT;
 		$width = 256;
 		$height = 306;
 		
@@ -116,7 +44,6 @@
 		while( $size > 1 && $text_width > $width-8) {
 			$size = $size - 1;
 			$text_width = imagefontwidth($size)*strlen($text); 
-//			$box = imageftbbox($size,0,$font,$text);
 		}
 		imagestring($image, $size, ($width-$text_width)/2, $height/3, $text, $blue);
 		
@@ -176,6 +103,8 @@
     
 	//
 	// generate a thumbnail from a movie, tvepisode or tvshow
+	// This retrieves the a url the $movie object and formats
+	// it to be the correct size and saves it locally for serving.
 	//
 	function generateThumbnail($db, $movie, $filebase) {
 		if (array_key_exists("idMovie", $movie)) {
@@ -205,36 +134,12 @@
 
 		$filepath = $filebase . ".tbn";
 
-/*		
-		//
-		// open URL and write contents to our filepath.
-		//
-		$fpsrc = fopen($thumb, 'rb');
-		if (!$fpsrc) {
-			error_log("Cannot open URL: " . $thumb);
-			return NULL;
-		}
-		$fpdest = fopen($filepath, 'wb');
-		if (!$fpdest) {
-			error_log("Cannot open file: " . $filepath);
-			fclose($fpsrc);
-			return NULL;  // will fail if web user doesn't have write access to this directory
-		}
-		while (!feof($fpsrc)) {
-			$chunk = fread($fpsrc, 8192);
-			fwrite($fpdest, $chunk);
-		}
-		fclose($fpsrc);
-		fclose($fpdest);
-*/
-		
 		$image = imagecreatefromjpeg($thumb);
 		if (!$image) {
 			$image = imagecreatefrompng($thumb);
 			if (!$image) {
 				// delete it.
 				error_log("Unable to read as JPEG: " . $thumb);
-//				unlink($filepath);
 				return NULL;
 			}
 		}
@@ -384,7 +289,7 @@
 	function findOrExtractID($db,$params) {
 		$cmd = $params[1];
 		if (strcasecmp($cmd,"PLAYLISTS")===0) {
-			if (count($params) < 4) return null;
+			if (count($params) < 4) return NULL;
 			$list = $params[2];
 			$title = $params[3];
 			$title = substr($title, 0, strlen($title)-4); // trim off extension
@@ -425,7 +330,6 @@
 				$title = substr($title,0,$idx);
 				$select = "SELECT * from movieview WHERE c07='" . SQLite3::escapeString($year) . 
 				                    "' AND c00='" . SQLite3::escapeString($title) . "'";
-//				error_log($select);
 			} else {
 				$select = "SELECT * from movieview WHERE c00='" . SQLite3::escapeString($title) . "'";
 			}
@@ -477,7 +381,7 @@
 	$cmd = $params[1];
 	
 	
-	$db = new MyDB();
+	$db = new RoksDB();
 	
 	//
 	// check last parameter for xml info.
@@ -638,11 +542,10 @@
 	
 	
 	header("Content-Type: text/html; charset=UTF-8");
-	print("<HTML>\n<HEAD>\n<TITLE>Movie List</TITLE>\n");
+	print('<html>\n<head>\n<title>Movie List</title>\n');
+	print('<link rel="stylesheet" href="moviestyles.css">');
 	
-	include 'moviestyles.php';
-	
-	print("</HEAD>\n<BODY>\n");
+	print("</head>\n<body>\n");
 	if ($ROKSBOX_MODE) print("<h1>Index of " . $_SERVER['PHP_SELF'] . "</h1>\n");
 	else {
 		print("<div class=\"headercontainer\">");

@@ -1,32 +1,10 @@
 <?php 
 
-	// for file paths in the DB that use the file system location, we replace
-	// the MOVIE_FS_FILES_BASE with MOVIE_HTTP_FILES_BASE
-	$MOVIE_HTTP_FILES_BASE = "/media/movies/";
-	$MOVIE_FS_FILES_BASE = "/Volumes/Bolivia/movies/";
-	// specify where the database location is. If it is relative to the .php file,
-	// set $MOVIE_DB_LOCATION_IS_RELATIVE to true
-	$MOVIE_DB_LOCATION = "/../../../db/Movies.db";
-	$MOVIE_DB_LOCATION_IS_RELATIVE = true;
+	require("../config.php");
+	require("RoksDB.php");
+
 	$API_KEY = '835727baa2a8325eab45362f7fed6f98';
 	
-	
-	
-	class MyDB extends SQLite3
-	{
-		function __construct()
-		{
-			global $MOVIE_DB_LOCATION_IS_RELATIVE;
-			global $MOVIE_DB_LOCATION;
-			if ($MOVIE_DB_LOCATION_IS_RELATIVE) {
-				$dbFile = __DIR__ . $MOVIE_DB_LOCATION;
-			} else {
-				$dbFile = $MOVIE_DB_LOCATION;
-			}
-				
-			$this->open($dbFile, SQLITE3_OPEN_READWRITE);
-		}
-	}
 	
 	function fs2httppath( $path ) {
 		global $MOVIE_FS_FILES_BASE;

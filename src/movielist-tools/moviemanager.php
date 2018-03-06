@@ -1,13 +1,30 @@
+<?php
+	// Must emit header first.
+	header("Content-Type: text/html; charset=UTF-8");
+?>
+
+<html><head><title>RoksBox Movie Manager</title>
+
+<link rel="stylesheet" href="styles.css" >
+
+</head><body>
+<div class="header row">
+<h1>Movie Manager</h1>
+
+
 <?php 
 
-	include 'moviesetup.php';
-	include 'TVDB.php';
+	require 'moviesetup.php';
+	require 'TVDB.php';
 	
+	$db = new RoksDB(true);
 	
+	//
+	// we form parameters that look like a path, so relative links
+	// will not work. We put the basepath in the URL links
+	//
+	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 
-	header("Content-Type: text/html; charset=UTF-8");
-		
-	
 	
 	function getTVShowThumbs($show) {
 
@@ -80,23 +97,9 @@
 	
 	
 	
-	
-	$db = new MyDB();
-	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 
-?>
-
-<HTML><HEAD><TITLE>Garr Movie Manager</TITLE>
-
-<?php	include 'styles.php';  ?>
-
-</HEAD><BODY>
-<div class="header row">
-<H1>Movie Manager</H1>
-<?php        
-	
-	print "Tools: <A class='navbutton' HREF=\"" . $basepath . "moviescan.php\">SCAN NEW</A>&nbsp;";
-	print "<A class='navbutton' HREF=\"" . $basepath . "actorimages.php\">PEOPLE</A>";
+	print "Tools: <a class='navbutton' HREF=\"" . $basepath . "moviescan.php\">SCAN NEW</a>&nbsp;";
+	print "<a class='navbutton' HREF=\"" . $basepath . "actorimages.php\">PEOPLE</a>";
     print "</div><div class=\"body row scroll-y\"><div class='content'>";
 
 	$mypath = "";
@@ -262,13 +265,9 @@
 	
 	$db->close();
 	
-	print "</div></BODY></HTML>\n";
-
 	
 	?>
-
-
-
-
-
-
+	
+	</div>
+	</body>
+	</html>
