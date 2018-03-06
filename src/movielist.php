@@ -6,6 +6,12 @@
 	$ROKSBOX_MODE =  stripos($_SERVER['HTTP_USER_AGENT'],'Roku/DVP') !== false;
 	$GOOGLETV     =  stripos($_SERVER['HTTP_USER_AGENT'],'GoogleTV') !== false;
 
+	//
+	// we form parameters that look like a path, so relative links
+	// will not work. We put the basepath in the URL links
+	//
+	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
+	
 	
 	function fs2httppath( $path ) {
 		global $MOVIE_FS_FILES_BASE;
@@ -543,7 +549,7 @@
 	
 	header("Content-Type: text/html; charset=UTF-8");
 	print('<html><head><title>Movie List</title>');
-	print('<link rel="stylesheet" href="../moviestyles.css">');
+	print('<link rel="stylesheet" href="{$basepath}moviestyles.css">');
 	
 	print("</head>\n<body>\n");
 	
