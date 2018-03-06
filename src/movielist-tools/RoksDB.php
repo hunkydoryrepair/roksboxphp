@@ -30,7 +30,6 @@
 				$dbFile = $MOVIE_DB_LOCATION;
 			}
 				
-			error_log($dbFile);
 			$this->open($dbFile, $readwrite ? SQLITE3_OPEN_READWRITE : SQLITE3_OPEN_READONLY);
 			$this->createFunction('ShiftedThe','ShiftedThe');
 		}

@@ -11,8 +11,7 @@
 	header("Content-Type: text/html; charset=UTF-8");
 		
 	function parseFilename( $filename ) {
-		$info = pathinfo($filename);
-		$title =  basename($filename,'.'.$info['extension']);
+		$title =  removeExbasename($filename);
 		$info['title'] = $title;
 		if (preg_match('/^(?P<title>.+) \((?P<year>.+)\)$/', $title, $matches)) {
 			$info['title'] = $matches['title'];
@@ -78,7 +77,6 @@
 	function searchAndShowForm( $db, $name, $search, $lookup ) {
 		$fileinfo = parseFilename($search);
 //		var_dump($fileinfo);
-
 		if ($lookup) {
 			$foundMatch = false;
 			$query = "query=" . rawurlencode($fileinfo['title']) ;
@@ -261,8 +259,9 @@
                 var url = "<?php echo $_SERVER['SCRIPT_NAME'];?>";
                 var div = $("#file" + divnum);
                 var fname = $("#file" + divnum + "_filename");
-                alert( url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + fname.val() );
-                div.load(url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + fname.val());
+				if (console.log)
+					console.log( url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + encodeURIComponent(fname.val()) );
+                div.load(url + "?srch=" + encodeURIComponent(field.val()) + "&file=" + encodeURIComponent(fname.val()));
                 return false;   
             });            
             
@@ -318,9 +317,11 @@
 		$db->close();
 	}
 	else {
+        $db = new RoksDB();
 		// just return the single form for this one element
 		$name = $_REQUEST['file'];
-		searchAndShowForm( $name, $searchstring );
+		searchAndShowForm( $db, $name, $searchstring,true );
 		ob_flush();
 		flush();
+		$db->close();
 	}
