@@ -22,7 +22,10 @@
 			global $MOVIE_DB_LOCATION_IS_RELATIVE;
 			global $MOVIE_DB_LOCATION;
 			if ($MOVIE_DB_LOCATION_IS_RELATIVE) {
-				$dbFile = __DIR__ . $MOVIE_DB_LOCATION;
+				if (! $MOVIE_DB_LOCATION[0] == '/' )
+					$dbFile = __DIR__ . '/' . $MOVIE_DB_LOCATION;
+				else
+					$dbFile = __DIR__ . $MOVIE_DB_LOCATION;
 			} else {
 				$dbFile = $MOVIE_DB_LOCATION;
 			}

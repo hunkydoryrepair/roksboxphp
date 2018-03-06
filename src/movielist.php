@@ -543,10 +543,13 @@
 	
 	header("Content-Type: text/html; charset=UTF-8");
 	print('<html>\n<head>\n<title>Movie List</title>\n');
-	print('<link rel="stylesheet" href="moviestyles.css">');
+	print('<link rel="stylesheet" href="../moviestyles.css">');
 	
 	print("</head>\n<body>\n");
-	if ($ROKSBOX_MODE) print("<h1>Index of " . $_SERVER['PHP_SELF'] . "</h1>\n");
+	
+	if ($ROKSBOX_MODE) {
+		print("<h1>Index of " . $_SERVER['PHP_SELF'] . "</h1>\n");
+	}
 	else {
 		print("<div class=\"headercontainer\">");
 		if (!empty($cmd)) print("<span class=\"backlink\"><A class=\"backlink\" href=\"..\">BACK</A></span>");
@@ -596,7 +599,7 @@
 						print("<TR><TD><A HREF=\"" . filepathencode($genre) . "/\">" . htmlspecialchars($genre) . "</A></TD></TR>");
 						print("<TR><TD><A HREF=\"" . filepathencode($genre) . ".jpg\"> <IMG BORDER=0 SRC=\"" . filepathencode($genre) . ".jpg\"/></A></TD></TR>");
 					} else {
-						print("<A HREF=\"" . filepathencode($genre) . "/\"><IMG class=\"thumbnail\" BORDER=0 SRC=\"" . filepathencode($genre) . ".jpg\"/></A>");
+						print("<a HREF=\"" . filepathencode($genre) . "/\"><img class=\"thumbnail\" border=0 src=\"" . filepathencode($genre) . ".jpg\"/></A>");
 					}
 				}
 			}      

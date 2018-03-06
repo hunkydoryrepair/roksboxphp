@@ -23,7 +23,7 @@
 					"Thriller"=>true,
 					"Comedy"=>true,
 					"Crime"=>true,
-					 "Sport"=>false,
+					"Sport"=>false,
 					"Road Movie"=>false,
 					"Neo-noir"=>false,
 					"Mystery"=>false,
