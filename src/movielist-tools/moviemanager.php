@@ -1,11 +1,18 @@
 <?php
 	// Must emit header first.
 	header("Content-Type: text/html; charset=UTF-8");
+
+	//
+	// we form parameters that look like a path, so relative links
+	// will not work. We put the basepath in the URL links
+	//
+	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
+	
 ?>
 
 <html><head><title>RoksBox Movie Manager</title>
 
-<link rel="stylesheet" href="styles.css" >
+<link rel="stylesheet" href="<?php echo $basepath ?>styles.css" >
 
 </head><body>
 <div class="header row">
@@ -19,11 +26,6 @@
 	
 	$db = new RoksDB(true);
 	
-	//
-	// we form parameters that look like a path, so relative links
-	// will not work. We put the basepath in the URL links
-	//
-	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 
 	
 	function getTVShowThumbs($show) {
