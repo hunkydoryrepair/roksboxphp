@@ -21,19 +21,19 @@
 	}
     
 ?>
-
-<HTML><HEAD><TITLE>Add Actor Images</TITLE>
+<!DOCTYPE html>
+<html><head><title>Add Actor Images</title>
 
 <?php include 'styles.php' ?>
 
-</HEAD><BODY>
+</head><body>
 <div class="header row">
 <?php      
     
 	
 	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 
-    print "<H1>Set Actor Images</H1>";
+    print "<h1>Set Actor Images</h1>";
 	print "<a class='navbutton' HREF=\"" . $basepath . "moviemanager.php\">MANAGER</a>&nbsp;";
 
 
@@ -58,7 +58,7 @@
         generateCacheThumbnail( $thumburl, $filename );
         
 		print "UPDATED " . $res . "<BR>";
-		print "<BR><A HREF=\"" . $_SERVER['SCRIPT_NAME'] . "\"> Return </A>";
+		print "<br/><a href=\"" . $_SERVER['SCRIPT_NAME'] . "\"> Return </a>";
 	}
 	
 	else if (array_key_exists('PATH_INFO', $_SERVER)) {
@@ -69,30 +69,32 @@
 	
 		if (strcasecmp($params[1],"actor") === 0 ) {
 			$actorname = urldecode($params[2]);
-			print "<FORM METHOD=POST ACTION=\"" . $_SERVER['SCRIPT_NAME'] . "\">";
+			print "<form method=POST action=\"" . $_SERVER['SCRIPT_NAME'] . "\">";
 			print "<input type=\"hidden\" name=\"actor\" value=\"" . urlencode($actorname) . "\"/>\n";
 			$actorimages = getActorImages($actorname);
             if ($actorimages != NULL ) {
                 $cnt = sizeof($actorimages);
                 for( $i=0; $i<$cnt; $i++ ) {
                     $pername = $actorimages[$i]["actor"]["name"];
-                    //print $pername . "<BR>";
-                    $perimgs = $actorimages[$i]["profiles"];
-                    //var_dump($perimgs);
-                    print "<table><TR>";
-                    $ii = 0;
-                    foreach( $perimgs as $img ) {
-                        $fullpath = $config['images']['base_url'] . "w185" . $img['file_path'];
-                        print "<TD valign=\"top\"><label for=\"" . $ii . "\"><IMG src=\"" . $fullpath . "\"/></label><BR>";
-                        print "<input type=\"radio\" name=\"thumb\" id=\"" . $ii . "\" value=\"" . urlencode($fullpath) . "\"/>";
-                        print "<label for=\"" . $ii . "\" >Choose</label></TD>\n";
-                        $ii = $ii+1;
-                    }
-                    print "</TR></TABLE>";
+                    print $pername . "<br/>";
+					if (isset($actorimages[$i]["profiles"]) {
+						$perimgs = $actorimages[$i]["profiles"];
+						//var_dump($perimgs);
+						print "<table><TR>";
+						$ii = 0;
+						foreach( $perimgs as $img ) {
+							$fullpath = $config['images']['base_url'] . "w185" . $img['file_path'];
+							print "<td valign=\"top\"><label for=\"" . $ii . "\"><IMG src=\"" . $fullpath . "\"/></label><br/>";
+							print "<input type=\"radio\" name=\"thumb\" id=\"" . $ii . "\" value=\"" . urlencode($fullpath) . "\"/>";
+							print "<label for=\"" . $ii . "\" >Choose</label></td>\n";
+							$ii = $ii+1;
+						}
+					}
+                    print "</tr></table>";
                 }
             }
 			print "<input type=\"submit\" value=\"Submit\" />\n";
-			print "</FORM>";
+			print "</form>";
 		}
 	}
 	else {
@@ -101,18 +103,18 @@
 		
 		print "<div class='scroll-y col' style='left:0;width:50%;'>";
 		print "<div style='padding:15px;'>";
-		print "<H1>ACTORS</H1>";
+		print "<h1>ACTORS</h1>";
 		while( $actor = $actors->fetchArray() ) {
 			if (empty($actor['strThumb']))
-	            print "<B>";
-	        print "<A HREF=\"" . $_SERVER['SCRIPT_NAME'] . "/actor/" . urlencode($actor['strActor']) . "\">" . htmlspecialchars($actor['strActor']) . " (" . $actor['cnt'] . ")</A><BR>\n";
+	            print "<strong>";
+	        print "<a HREF=\"" . $_SERVER['SCRIPT_NAME'] . "/actor/" . urlencode($actor['strActor']) . "\">" . htmlspecialchars($actor['strActor']) . " (" . $actor['cnt'] . ")</a><br/>\n";
 			if (empty($actor['strThumb']))
-	            print "</B>";
+	            print "</strong>";
 		}
 		
 		print "</div></div><div class='scroll-y col' style='border-left:1px solid;left:50%;right:0'>";
 		print "<div style='padding:15px;'>";
-		print "<H1>DIRECTORS</H1>";
+		print "<h1>DIRECTORS</h1>";
 		$actors = $db->query('SELECT strActor, count(*) as cnt, strThumb FROM actors JOIN directorlinkmovie on actors.idActor=directorlinkmovie.idDirector GROUP BY actors.idActor order by cnt desc');
 		
 		while( $actor = $actors->fetchArray() ) {
@@ -131,7 +133,7 @@
 
 	$db->close();
 	
-	print "</div></BODY></HTML>\n";
+	print "</div></body></html>\n";
 
 	
 	?>
