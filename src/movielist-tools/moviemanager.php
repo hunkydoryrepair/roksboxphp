@@ -12,7 +12,7 @@
 <!DOCTYPE html>
 <html><head><title>RoksBox Movie Manager</title>
 
-<link rel="stylesheet" href="<?php echo $basepath ?>styles.css" >
+<?php include 'styles.css' ?>
 
 </head><body>
 <div class="header row">

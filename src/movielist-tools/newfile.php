@@ -43,6 +43,7 @@
 		</style>
 		<script type="text/javascript" src="js/md5.js"></script>
 		<script type="text/javascript" src="js/upload.js"></script>
+		<?php include 'styles.css' ?>		
 	</head>
 	<body>
 <div class="header row">
