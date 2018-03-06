@@ -411,7 +411,7 @@
 		}
 
 
-		$db = new MyDB();
+		$db = new RoksDB(true);
 		$movieinfo = addShowInfoToLocalDB($db, $movieinfo);
 
 

@@ -4,14 +4,6 @@
 
 	include 'moviesetup.php';
 	
-	function sendFileContents($filepath) {
-// X-sendfile method		
-		header("X-Sendfile: " . $filepath);
-		header("Content-type: application/octet-stream");
-		header('Content-Disposition: attachment; filename="' . basename($filepath) . '"');		
-	}
-
-
 
 	//
 	// cache thumbnail locally

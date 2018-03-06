@@ -215,7 +215,7 @@
 
         $path = realpath($dir);
 	
-        $db = new MyDB();
+        $db = new RoksDB();
 
         $objects = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path), 
         RecursiveIteratorIterator::SELF_FIRST);

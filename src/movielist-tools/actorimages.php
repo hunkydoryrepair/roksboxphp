@@ -34,12 +34,12 @@
 	$basepath = dirname($_SERVER['SCRIPT_NAME']) . "/";
 
     print "<H1>Set Actor Images</H1>";
-	print "<A class='navbutton' HREF=\"" . $basepath . "moviemanager.php\">MANAGER</A>&nbsp;";
+	print "<a class='navbutton' HREF=\"" . $basepath . "moviemanager.php\">MANAGER</a>&nbsp;";
 
 
     print "</div><div class=\"body row scroll-y\">";    
     
-	$db = new MyDB();
+	$db = new RoksDB();
     
     
 	$mypath = "";

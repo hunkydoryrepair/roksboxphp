@@ -520,7 +520,7 @@
 		}
 
 
-		$db = new MyDB();
+		$db = new RoksDB(true);
 		$movieinfo = addMovieInfoToLocalDB($db, $movieinfo);
 		if (!empty($movieinfo['localdbid']))
 			print "UPDATED DATA<BR/>";
@@ -541,7 +541,7 @@
 	else if (!empty($_REQUEST['localdbid'])) {
 		$localdbid = urldecode($_REQUEST['localdbid']);
 
-		$db = new MyDB();
+		$db = new RoksDB();
 		$movieinfo = gatherMovieInfoFromLocal($db, $localdbid);
 		$db->close();
 

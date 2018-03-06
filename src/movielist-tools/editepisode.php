@@ -463,7 +463,7 @@
 					print "UPDATED THUMBNAIL<BR/>";
 			}
 	
-			$db = new MyDB();
+			$db = new RoksDB(true);
 			$movieinfo = addEpisodeInfoToLocalDB($db, $movieinfo);
 			if (!empty($movieinfo['localdbid']))
 				print "UPDATED<BR/>";
@@ -481,7 +481,7 @@
 		$season = ($_REQUEST['season']);
 		$episode = ($_REQUEST['episode']);
 
-		$db = new MyDB();
+		$db = new RoksDB();
 		$movieinfo = gatherEpisodeInfo($db, $episodefile, $showid, $tvdbid, $season, $episode);
 		$db->close();
 
@@ -492,7 +492,7 @@
 	else if (!empty($_REQUEST['localdbid'])) {
 		$localdbid = urldecode($_REQUEST['localdbid']);
 
-		$db = new MyDB();
+		$db = new RoksDB();
 		$movieinfo = gatherEpisodeInfoFromLocal($db, $localdbid);
 		$db->close();
 

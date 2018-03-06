@@ -1,5 +1,5 @@
 <STYLE type="text/css">
-a {font-family:arial,sans-serif; font-size:12pt; font-weight:bold}
+body.movielist a {font-family:arial,sans-serif; font-size:12pt; font-weight:bold}
 span.movietitle {color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 14pt; font-style:italic}
 span.director {display:block; float:left; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
 span.runtime {display:block; float:right; color: black; font-weight:bold; font-family:arial,sans-serif; font-size: 10pt}
