@@ -11,7 +11,9 @@
 	
 	// set to a font available on the system with GD Library to be used
 	// for rendering text thumbnails.
-	$THUMBNAIL_FONT = "arial.ttf";
+	$THUMBNAIL_FONT = "/media/usb/webroot/media/Mizo Arial.ttf";
+	$THUMBNAIL_BGCOLOR = "FFFF33";
+	$THUMBNAIL_TEXTCOLOR = "000033";
 	
 	// if $USE_XSENDFILE is true, mod_xsendfile must be configured on
 	// the web server. If false, redirects will be used instead.
@@ -27,6 +29,7 @@
 					"Road Movie"=>false,
 					"Neo-noir"=>false,
 					"Mystery"=>false,
+					"Home Movies"=>true,
 					"Music"=>false,
 					"History"=>false,
 					"Erotic"=>false);
