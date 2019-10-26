@@ -16,6 +16,16 @@ img.thumbnail {width:206px; border:0}
 a.playlink {font-family:arial,sans-serif; font-size:14pt;  border:1px solid; font-weight:bold; color:blue; background-color:lightgray; text-decoration:none}
 a.selectlink {font-family:arial,sans-serif; font-size:14pt; border:1px solid; color:black; background-color:lightgray; text-decoration:none}
 
+div.tipdetail {
+	display:none;
+}
+.tipsource:hover + div.tipdetail {
+	display: inline-block;
+	position: absolute;
+	z-index: 10;
+	border: 2px solid black;
+}
+
     /* Generic pane rules */
     body { margin: 0 }
     .row, .col { overflow: hidden; position: absolute; }

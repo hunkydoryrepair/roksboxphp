@@ -2,4 +2,12 @@ Source Files.
 
 Install these files in folder that you point your Roksbox Roku app to.
 
-TBD: document his
+Running with Apache on Linux
+	install apache (apt-get install apache2 libapache2-mod-php php-mcrypt)
+	install php (apt-get install php7.2-cli hhvm)
+	install sqlite3 for php (apt-get install php-sqlite3)
+	install curl, xml, gd, sendfile for php (apt-get install php-xml php-curl php-gd)
+	install xsendfile (apt-get install libapache2-mod-xsendfile)
+
+	Apache 
+		

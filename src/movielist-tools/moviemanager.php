@@ -101,6 +101,7 @@
 	
 
 	print "Tools: <a class='navbutton' HREF=\"" . $basepath . "moviescan.php\">SCAN NEW</a>&nbsp;";
+	print "<a class='navbutton' HREF=\"" . $basepath . "verifyfiles.php\">SCAN MISSING</a>&nbsp;";
 	print "<a class='navbutton' HREF=\"" . $basepath . "actorimages.php\">PEOPLE</a>&nbsp;";
 	print "<a class='navbutton' HREF=\"" . $basepath . "newfile.php\">UPLOAD</a>&nbsp;";
 	print "<a class='navbutton' HREF=\"" . $basepath . "..\movielist.php\">BROWSE</a>";

@@ -31,6 +31,8 @@
 			}
 				
 			$this->open($dbFile, $readwrite ? SQLITE3_OPEN_READWRITE : SQLITE3_OPEN_READONLY);
+            // synchronous transactions can be VERY slow on certain file systems
+            $this->exec('pragma synchronous = off;');
 			$this->createFunction('ShiftedThe','ShiftedThe');
 		}
 	}
