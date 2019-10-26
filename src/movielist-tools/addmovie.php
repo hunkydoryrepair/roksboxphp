@@ -218,7 +218,7 @@
 
 				// associate person with movie
 				$db->exec("INSERT INTO actorlinkmovie (idActor, idMovie, strRole) VALUES ('" . $idactor . "','" . $localid . "','" 
-							. SQLite3::escapeString(trim($spl[1])) . "')");
+							. SQLite3::escapeString(trim(isset($spl[1]) ? $spl[1] : "")) . "')");
 			}
 
 			// associate director

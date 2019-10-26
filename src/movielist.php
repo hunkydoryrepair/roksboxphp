@@ -432,7 +432,11 @@
 						sendFileContents($path,$lastparam);
 					} else if (file_exists( $path = $MOVIE_FS_FILES_BASE .  rawurldecode($filename) . ".tbn")) {
 						sendFileContents($path,$lastparam);
-                    } 
+                    } else if (file_exists( $path = $MOVIE_FS_FILES_BASE . "images/" . rawurldecode($filename) . ".png")) {
+						sendFileContents($path,$lastparam);
+					} else if (file_exists( $path = $MOVIE_FS_FILES_BASE .  rawurldecode($filename) . ".png")) {
+						sendFileContents($path,$lastparam);
+                    }
                     else {
                         //
                         // try to generate it from actor name

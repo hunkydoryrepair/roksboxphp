@@ -25,3 +25,6 @@ mod_xsendfile - optional. (although might be required as redirects don't always 
 
 
 
+# edit config.php
+
+

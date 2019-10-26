@@ -10,8 +10,34 @@
 
     header("Content-Type: text/html; charset=UTF-8");
         
+        
+    // change where the file lives!
+	function updateFilePath( $db, $idFile, $strPath )
+	{
+        if ($strPath[-1] != "/") $strPath .= "/";
+        
+		//
+		// get fileid and pathid first.
+		//
+		$idpath  = $db->querySingle("SELECT idPath FROM path WHERE strPath like '" . SQLite3::escapeString ($strPath) . "'");
+		if (empty($idpath))
+		{
+			if ($db->exec("INSERT INTO path (strPath,strContent) VALUES ('" . SQLite3::escapeString($strPath) . "', 'movies')"))
+			{
+				$idpath = $db->lastInsertRowID();
+			}
+		}
+
+		//
+		// now update the file
+		//
+		$db->exec("UPDATE files SET idPath='" . SQLite3::escapeString($idpath) . "' WHERE idFile='" . SQLite3::escapeString ($idFile) . "'");
+    }    
+        
+        
     function parseFilename( $filename ) {
         $title =  removeExtension($filename);
+        $title = str_replace("_"," ", $title);
         $info['title'] = $title;
         if (preg_match('/^(?P<title>.+) \((?P<year>.+)\)$/', $title, $matches)) {
             $info['title'] = $matches['title'];
@@ -283,20 +309,44 @@
         foreach($objects as $name => $object){
             if (preg_match('/\/DVD Extras\//', $name)) continue;
 
+            // only look at these file types
             if (preg_match('/\.m4v$/', $name) != 0 ||
               preg_match('/\.mp4$/', $name) != 0 ||
             preg_match('/\.mkv$/', $name) != 0) {
                 
                 $basename = basename($name);
+                // test if this file exists in the DB
                 $res = $db->querySingle($select = 'SELECT * FROM files JOIN path ON files.idPath = path.idPath WHERE strFileName like \'' 
                         . SQLite3::escapeString($basename) . '\' AND strPath like \'' .
                         SQLite3::escapeString(dirname($name)) . '/\'');  
 
-                // test if this file exists in the DB
+                // if exact path not found but same file in another folder, check if the file just moved and
+                // just correct it.
                 if (empty($res)) {
                     print "<div style='border:1px solid; margin:5px;'>";
+                    $res2 = $db->querySingle($select = 'SELECT * FROM files JOIN path ON files.idPath = path.idPath WHERE strFileName like \'' 
+                            . SQLite3::escapeString($basename) . '\'', true);  
+                    if (!empty($res2)) {
+                        //
+                        // check if file exists. Assume just a single hit. Probably?
+                        //
+                        if (!file_exists($res2['strPath'] . $res2['strFilename']))
+                        {
+                            // apparently, this file just moved places. Update path.
+                            updateFilePath($db, $res2['idFile'], dirname($name));
+                            $res = res2; // don't present form
+                            print ("File ".htmlentities($name)." location updated</div>");
+                        }
+                        else
+                        {
+                            print (htmlentities($name)."<br/>**File with same name exists in another location**<br/>");
+                        }
+                    }
+                }
+                // does not exist so display it
+                if (empty($res)) {
 
-                    print "<input style=\"display:none\" type='text'  id='file" . $divcount . "_field' value='" . htmlentities( $basename ) . "'/>";
+                    print "<input style=\"display:none\" type='text'  id='file" . $divcount . "_field' value='" . htmlentities( removeExtension($basename) ) . "'/>";
                     print "<input  type='hidden'  id='file" . $divcount . "_filename' value='" . urlencode( $name ) . "'/>";
                     print "<span id='file" . $divcount . "_span'>" .  htmlentities( $basename ) . "</span>";
                     print "<button id='file" . $divcount . "_button' onclick=\"change(" . $divcount . ");\" type='button'>Edit</button>";
@@ -314,6 +364,7 @@
             }
         }
         
+        print "<br/>Scan Completed";
         print "</div></div></body></html>";
 
         $db->close();
