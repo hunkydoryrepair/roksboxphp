@@ -27,7 +27,8 @@
 <?php include 'styles.css' ?>
 
 </head><body>
-<div class="header row">
+<div class='header row'><div style='padding-left:15px;'>
+
 <?php      
     
     
@@ -37,7 +38,7 @@
     print "<a class='navbutton' href=\"" . $basepath . "moviemanager.php\">MANAGER</a>&nbsp;";
 
 
-    print "</div><div class=\"body row scroll-y\">";    
+    print "</div></div><div class='body row scroll-y'><div style='padding:15px'>";    
     
     $db = new RoksDB(true);
     
@@ -134,7 +135,7 @@
 
     $db->close();
     
-    print "</div></body></html>\n";
+    print "</div></div></body></html>\n";
 
     
     ?>

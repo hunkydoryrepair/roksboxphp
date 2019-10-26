@@ -14,6 +14,7 @@
     // change where the file lives!
 	function updateFilePath( $db, $idFile, $strPath )
 	{
+        $db = new RoksDB(true);
         if ($strPath[-1] != "/") $strPath .= "/";
         
 		//
@@ -31,7 +32,10 @@
 		//
 		// now update the file
 		//
-		$db->exec("UPDATE files SET idPath='" . SQLite3::escapeString($idpath) . "' WHERE idFile='" . SQLite3::escapeString ($idFile) . "'");
+		if (!$db->exec("UPDATE files SET idPath='" . SQLite3::escapeString($idpath) . "' WHERE idFile='" . SQLite3::escapeString ($idFile) . "'")) {
+            print "<br>".$db->lastErrorMsg();
+        }
+        $db->close();
     }    
         
         
@@ -334,7 +338,7 @@
                         {
                             // apparently, this file just moved places. Update path.
                             updateFilePath($db, $res2['idFile'], dirname($name));
-                            $res = res2; // don't present form
+                            $res = $res2; // don't present form
                             print ("File ".htmlentities($name)." location updated</div>");
                         }
                         else
